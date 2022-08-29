@@ -8,6 +8,10 @@
         <entry key="app/src/main/res/layout/activity_cashier.xml" value="0.19401041666666666" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.19401041666666666" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.30052083333333335" />
+        <entry key="app/src/main/res/layout/content_cashier.xml" value="0.20182291666666666" />
+        <entry key="app/src/main/res/layout/fragment_first.xml" value="0.20182291666666666" />
+        <entry key="app/src/main/res/layout/fragment_second.xml" value="0.20182291666666666" />
+        <entry key="app/src/main/res/layout/fragment_status_bar.xml" value="0.20182291666666666" />
       </map>
     </option>
   </component>
