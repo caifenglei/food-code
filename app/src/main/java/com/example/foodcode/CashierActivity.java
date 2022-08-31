@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -25,8 +26,17 @@ public class CashierActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivityCashierBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+//        binding = ActivityCashierBinding.inflate(getLayoutInflater());
+//        setContentView(binding.getRoot());
+        setContentView(R.layout.activity_cashier);
+
+
+        if(savedInstanceState == null){
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            ConsumeRecordsFragment consumeRecordsFragment = new ConsumeRecordsFragment();
+            transaction.replace(R.id.consumeRecordsFrame, consumeRecordsFragment);
+            transaction.commit();
+        }
 
 //        TextView tenantName = findViewById(R.id.textViewTenantName);
 //        tenantName.setText("某集团某分支某摊点某窗口007");
