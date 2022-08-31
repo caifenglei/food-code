@@ -3,6 +3,7 @@ package com.example.foodcode;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -49,6 +50,11 @@ public class ConsumeRecordsFragment extends Fragment {
         //Adapter
         recordsAdapter = new ConsumeRecordAdapter(consumeRecordList);
         recordsRecyclerView.setAdapter(recordsAdapter);
+
+        //Swipe
+        ItemSwipeController swipeController = new ItemSwipeController();
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(swipeController);
+        itemTouchHelper.attachToRecyclerView(recordsRecyclerView);
 
         return rootView;
     }
