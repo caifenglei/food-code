@@ -31,7 +31,7 @@ public class StatusBarFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-//        TextView textClock = (TextView) getView().findViewById(R.id.textViewDatetime);
+//        TextView textClock = getView().findViewById(R.id.textViewDatetime);
 //        textClock.setText("某集团某分支某摊点某窗口007");
 //        TextClock textClock = (TextClock) getView().findViewById(R.id.textViewTenantName);
 //        textClock.setTimeZone("America/Los_Angeles");
@@ -41,8 +41,8 @@ public class StatusBarFragment extends Fragment {
 
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_status_bar, container, false);
-//        TextView tenantName = rootView.findViewById(R.id.textViewTenantName);
-//        tenantName.setText("某集团某分支某摊点某窗口007");
+        TextView tenantName = rootView.findViewById(R.id.textViewTenantName);
+        tenantName.setText("某集团某分支某摊点某窗口007");
 
         return rootView;
 
@@ -54,10 +54,10 @@ public class StatusBarFragment extends Fragment {
 //        return binding.getRoot();
     }
 
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        TextView tenantName = rootView.findViewById(R.id.textViewTenantName);
-        tenantName.setText("某集团某分支某摊点某窗口007");
-    }
+//    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+//        super.onViewCreated(view, savedInstanceState);
+//
+//        TextView tenantName = rootView.findViewById(R.id.textViewTenantName);
+//        tenantName.setText("某集团某分支某摊点某窗口007");
+//    }
 }

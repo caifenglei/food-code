@@ -7,6 +7,7 @@ import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -26,6 +27,9 @@ public class CashierActivity extends AppCompatActivity {
 
         binding = ActivityCashierBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+//        TextView tenantName = findViewById(R.id.textViewTenantName);
+//        tenantName.setText("某集团某分支某摊点某窗口007");
 
 //        setSupportActionBar(binding.toolbar);
 
