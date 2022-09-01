@@ -1,5 +1,6 @@
 package com.example.foodcode;
 
+import android.graphics.Canvas;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -55,6 +56,12 @@ public class ConsumeRecordsFragment extends Fragment {
         ItemSwipeController swipeController = new ItemSwipeController();
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(swipeController);
         itemTouchHelper.attachToRecyclerView(recordsRecyclerView);
+        recordsRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
+                swipeController.onDraw(c);
+            }
+        });
 
         return rootView;
     }
