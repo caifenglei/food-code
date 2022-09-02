@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,12 +54,17 @@ public class ConsumeRecordsFragment extends Fragment {
         recordsRecyclerView.setAdapter(recordsAdapter);
 
         //Swipe
-        ItemSwipeController swipeController = new ItemSwipeController();
+        ItemSwipeController swipeController = new ItemSwipeController(new SwipeActions() {
+            @Override
+            public void onRefundClicked(int position) {
+                Log.i("swipe clicked position:", String.valueOf(position));
+            }
+        });
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(swipeController);
         itemTouchHelper.attachToRecyclerView(recordsRecyclerView);
-        recordsRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
+        recordsRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration(){
             @Override
-            public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
+            public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state){
                 swipeController.onDraw(c);
             }
         });

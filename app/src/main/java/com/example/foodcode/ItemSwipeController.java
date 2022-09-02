@@ -20,11 +20,15 @@ public class ItemSwipeController extends ItemTouchHelper.Callback {
 
     // define is action is swipe back
     private Boolean swipeBack = false;
-    private static final float refundButtonWidth = 84;
+    private static final float refundButtonWidth = 104;
     private SwipeState swipeShownState = SwipeState.GONE;
+    private SwipeActions swipeActions = null;
     private RectF buttonInstance;
     private RecyclerView.ViewHolder currentItemViewHolder = null;
 
+    public ItemSwipeController(SwipeActions actions){
+        this.swipeActions = actions;
+    }
 
     //tells helper what kind of actions RecyclerView should handle
     @Override
@@ -48,7 +52,7 @@ public class ItemSwipeController extends ItemTouchHelper.Callback {
     @Override
     public int convertToAbsoluteDirection(int flags, int layoutDirection) {
         if (swipeBack) {
-            swipeBack = false;
+            swipeBack = swipeShownState != SwipeState.GONE;;
             return 0;
         }
         return super.convertToAbsoluteDirection(flags, layoutDirection);
@@ -136,11 +140,11 @@ public class ItemSwipeController extends ItemTouchHelper.Callback {
                     setItemsClickable(recyclerView, true);
                     swipeBack = false;
 
-//                    if (buttonInstance != null && buttonInstance.contains(event.getX(), event.getY())) {
-//                        if (buttonShowedState == ButtonsState.RIGHT_VISIBLE) {
-//                            buttonsActions.onRightClicked(viewHolder.getAdapterPosition());
-//                        }
-//                    }
+                    if (buttonInstance != null && buttonInstance.contains(event.getX(), event.getY())) {
+                        if (swipeShownState == SwipeState.RIGHT_VISIBLE) {
+                            swipeActions.onRefundClicked(viewHolder.getAdapterPosition());
+                        }
+                    }
 
                     swipeShownState = SwipeState.GONE;
                     currentItemViewHolder = null;
@@ -160,9 +164,10 @@ public class ItemSwipeController extends ItemTouchHelper.Callback {
 
         View itemView = viewHolder.itemView;
         Paint p = new Paint();
+        float buttonWidthWithoutPadding = refundButtonWidth - 20;
         float corners = 0;
 
-        RectF rightButton = new RectF(itemView.getRight() - refundButtonWidth, itemView.getTop(), itemView.getRight(), itemView.getBottom());
+        RectF rightButton = new RectF(itemView.getRight() - buttonWidthWithoutPadding, itemView.getTop(), itemView.getRight(), itemView.getBottom());
         p.setColor(Color.RED);
         c.drawRoundRect(rightButton, corners, corners, p);
         drawText("退款", c, rightButton, p);
@@ -173,7 +178,7 @@ public class ItemSwipeController extends ItemTouchHelper.Callback {
     }
 
     private void drawText(String text, Canvas c, RectF button, Paint p) {
-        float textSize = 60;
+        float textSize = 16;
         p.setColor(Color.WHITE);
         p.setAntiAlias(true);
         p.setTextSize(textSize);
