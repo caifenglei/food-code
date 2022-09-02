@@ -3,6 +3,7 @@ package com.example.foodcode;
 import android.graphics.Canvas;
 import android.os.Bundle;
 
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -58,6 +59,8 @@ public class ConsumeRecordsFragment extends Fragment {
             @Override
             public void onRefundClicked(int position) {
                 Log.i("swipe clicked position:", String.valueOf(position));
+                DialogFragment refundConfirmDialog = new PasswordConfirmDialogFragment();
+                refundConfirmDialog.show(getParentFragmentManager(), "refund_dialog");
             }
         });
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(swipeController);
