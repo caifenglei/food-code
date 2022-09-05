@@ -34,7 +34,9 @@ public class CashierActivity extends AppCompatActivity {
         if(savedInstanceState == null){
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             ConsumeRecordsFragment consumeRecordsFragment = new ConsumeRecordsFragment();
+            CalculatorFragment calculatorFragment = new CalculatorFragment();
             transaction.replace(R.id.consumeRecordsFrame, consumeRecordsFragment);
+            transaction.replace(R.id.calculatorFrame, calculatorFragment);
             transaction.commit();
         }
 

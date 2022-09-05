@@ -20,6 +20,25 @@
     <string name="login_failed">"Login failed"</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_order">订单</string>
     <string name="button_text_confirm_refund">确认退款</string>
     <string name="button_text_cancel_refund">取消操作</string>
+    <string name="unit_RMB">￥</string>
+    <string name="calc_one">1</string>
+    <string name="calc_two">2</string>
+    <string name="calc_three">3</string>
+    <string name="calc_four">4</string>
+    <string name="calc_five">5</string>
+    <string name="calc_six">6</string>
+    <string name="calc_seven">7</string>
+    <string name="calc_eight">8</string>
+    <string name="calc_nine">9</string>
+    <string name="calc_zero">0</string>
+    <string name="calc_plus">+</string>
+    <string name="calc_deduct">－</string>
+    <string name="calc_multiply">×</string>
+    <string name="calc_divide">÷</string>
+    <string name="calc_point">·</string>
+    <string name="calc_cashier">收银</string>
+    <string name="del">del</string>
 </resources>
