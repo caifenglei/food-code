@@ -42,4 +42,6 @@
     <string name="calc_point">·</string>
     <string name="calc_cashier">收银</string>
     <string name="del">del</string>
+    <string name="waiting_customer_pay">等待客户付款...</string>
+    <string name="button_text_cancel_cashier">取消收银</string>
 </resources>

@@ -16,8 +16,10 @@
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.30052083333333335" />
         <entry key="app/src/main/res/layout/content_cashier.xml" value="0.20182291666666666" />
         <entry key="app/src/main/res/layout/content_consume_record.xml" value="0.20182291666666666" />
+        <entry key="app/src/main/res/layout/dialog_cashier_waiting.xml" value="0.20182291666666666" />
         <entry key="app/src/main/res/layout/dialog_refund_confirm.xml" value="0.13515625" />
         <entry key="app/src/main/res/layout/fragment_calculator.xml" value="0.1453125" />
+        <entry key="app/src/main/res/layout/fragment_cashier_waiting_dialog.xml" value="0.20182291666666666" />
         <entry key="app/src/main/res/layout/fragment_consume_records.xml" value="0.20182291666666666" />
         <entry key="app/src/main/res/layout/fragment_first.xml" value="0.20182291666666666" />
         <entry key="app/src/main/res/layout/fragment_password_confirm_dialog.xml" value="0.13515625" />

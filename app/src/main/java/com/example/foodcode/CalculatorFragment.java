@@ -3,6 +3,7 @@ package com.example.foodcode;
 import android.os.Bundle;
 
 import androidx.appcompat.widget.AppCompatImageButton;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -126,7 +127,7 @@ public class CalculatorFragment extends Fragment {
         if (Objects.equals(numberStack, "")) {
             numberStack = nbr;
         } else {
-            if(numberStack.length() < 6) {
+            if (numberStack.length() < 6) {
                 numberStack = numberStack + nbr;
             }
         }
@@ -154,7 +155,7 @@ public class CalculatorFragment extends Fragment {
         } else if (elementCount == 1) {
             if (!Objects.equals(numberStack, "")) {
                 calElements.add(Double.parseDouble(numberStack));
-                if(calculateResult(activeOperator)) {
+                if (calculateResult(activeOperator)) {
                     calElements.add(calResult);
                     activeOperator = opt;
                 }
@@ -176,8 +177,9 @@ public class CalculatorFragment extends Fragment {
     private void tapCashier() {
         int factorCount = calElements.size();
         Double moneyToPay = 0.00;
-        if (factorCount == 1 && calResult > 0) {
-
+        if (factorCount == 0 && numberStack != "" && Double.parseDouble(numberStack) != 0) {
+            moneyToPay = Double.parseDouble(numberStack);
+        } else if (factorCount == 1 && calResult > 0) {
             moneyToPay = calResult;
         } else if (factorCount == 2) {
             if (calculateResult(activeOperator)) {
@@ -186,6 +188,8 @@ public class CalculatorFragment extends Fragment {
         }
         if (moneyToPay > 0) {
             Log.i("cashier", String.valueOf(moneyToPay));
+            DialogFragment waitingCashierDialog = new CashierWaitingDialogFragment();
+            waitingCashierDialog.show(getParentFragmentManager(), "refund_dialog");
         } else {
             Log.i("cashier", "no Money to pay");
         }
@@ -218,7 +222,7 @@ public class CalculatorFragment extends Fragment {
         return ok;
     }
 
-    private String formatResultValue(Double value){
+    private String formatResultValue(Double value) {
         BigDecimal bd = new BigDecimal(value);
         calResult = bd.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue(); //四舍五入
 
