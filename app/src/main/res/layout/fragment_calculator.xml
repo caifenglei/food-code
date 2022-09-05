@@ -11,29 +11,12 @@
         android:layout_height="match_parent"
         android:background="@color/black">
 
-        <TextView
-            android:id="@+id/textView20"
-            android:layout_width="140dp"
-            android:layout_height="130dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/border_calculate_element"
-            android:gravity="center"
-            android:text="@string/calc_four"
-            android:textAlignment="center"
-            android:textColor="@color/default_dark"
-            android:textSize="52sp"
-            app:layout_constraintEnd_toStartOf="@+id/keyFive"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/keyOne" />
-
-        <TextView
-            android:id="@+id/keyMutiply"
+        <Button
+            android:id="@+id/keyMultiply"
             android:layout_width="105dp"
             android:layout_height="130dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/border_calculate_element"
-            android:gravity="center"
             android:text="@string/calc_multiply"
             android:textAlignment="center"
             android:textColor="@color/default_dark"
@@ -43,20 +26,19 @@
             app:layout_constraintStart_toEndOf="@+id/keySix"
             app:layout_constraintTop_toBottomOf="@+id/keyDivide" />
 
-        <TextView
+        <Button
             android:id="@+id/keyPlus"
             android:layout_width="105dp"
             android:layout_height="130dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/border_calculate_element"
-            android:gravity="center"
             android:text="@string/calc_plus"
             android:textAlignment="center"
             android:textColor="@color/default_dark"
             android:textSize="52sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/keyMutiply"
+            app:layout_constraintStart_toEndOf="@+id/keyMultiply"
             app:layout_constraintTop_toBottomOf="@+id/keyDeduct" />
 
         <View
@@ -97,13 +79,12 @@
             app:layout_constraintStart_toEndOf="@+id/textView8"
             app:layout_constraintTop_toTopOf="@+id/view6" />
 
-        <TextView
+        <Button
             android:id="@+id/keyOne"
             android:layout_width="140dp"
             android:layout_height="130dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/border_calculate_element"
-            android:gravity="center"
             android:text="@string/calc_one"
             android:textAlignment="center"
             android:textColor="@color/default_dark"
@@ -113,13 +94,12 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/view6" />
 
-        <TextView
+        <Button
             android:id="@+id/keyFour"
             android:layout_width="140dp"
             android:layout_height="130dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/border_calculate_element"
-            android:gravity="center"
             android:text="@string/calc_four"
             android:textAlignment="center"
             android:textColor="@color/default_dark"
@@ -129,13 +109,12 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/keyOne" />
 
-        <TextView
+        <Button
             android:id="@+id/keySeven"
             android:layout_width="140dp"
             android:layout_height="130dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/border_calculate_element"
-            android:gravity="center"
             android:text="@string/calc_seven"
             android:textAlignment="center"
             android:textColor="@color/default_dark"
@@ -145,31 +124,28 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/keyFour" />
 
-        <TextView
+        <Button
             android:id="@+id/keyEight"
             android:layout_width="140dp"
             android:layout_height="130dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/border_calculate_element"
-            android:gravity="center"
             android:text="@string/calc_eight"
             android:textAlignment="center"
             android:textColor="@color/default_dark"
             android:textSize="52sp"
-            app:layout_constraintEnd_toStartOf="@+id/keyNight"
+            app:layout_constraintEnd_toStartOf="@+id/keyNine"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/keySeven"
             app:layout_constraintTop_toBottomOf="@+id/keyFour" />
 
-        <TextView
-            android:id="@+id/keyNight"
+        <Button
+            android:id="@+id/keyNine"
             android:layout_width="140dp"
             android:layout_height="130dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/border_calculate_element"
-            android:gravity="center"
             android:text="@string/calc_nine"
-            android:textAlignment="center"
             android:textColor="@color/default_dark"
             android:textSize="52sp"
             app:layout_constraintEnd_toStartOf="@+id/keyCashier"
@@ -177,15 +153,13 @@
             app:layout_constraintStart_toEndOf="@+id/keyEight"
             app:layout_constraintTop_toBottomOf="@+id/keyFour" />
 
-        <TextView
+        <Button
             android:id="@+id/keyPoint"
             android:layout_width="140dp"
             android:layout_height="130dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/border_calculate_element"
-            android:gravity="center"
             android:text="@string/calc_point"
-            android:textAlignment="center"
             android:textColor="@color/default_dark"
             android:textSize="52sp"
             app:layout_constraintEnd_toStartOf="@+id/keyZero"
@@ -193,15 +167,13 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/keySeven" />
 
-        <TextView
+        <Button
             android:id="@+id/keyZero"
             android:layout_width="140dp"
             android:layout_height="130dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/border_calculate_element"
-            android:gravity="center"
             android:text="@string/calc_zero"
-            android:textAlignment="center"
             android:textColor="@color/default_dark"
             android:textSize="52sp"
             app:layout_constraintEnd_toStartOf="@+id/keyDelete"
@@ -209,15 +181,13 @@
             app:layout_constraintStart_toEndOf="@+id/keyPoint"
             app:layout_constraintTop_toBottomOf="@+id/keyEight" />
 
-        <TextView
+        <Button
             android:id="@+id/keyFive"
             android:layout_width="140dp"
             android:layout_height="130dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/border_calculate_element"
-            android:gravity="center"
             android:text="@string/calc_five"
-            android:textAlignment="center"
             android:textColor="@color/default_dark"
             android:textSize="52sp"
             app:layout_constraintEnd_toStartOf="@+id/keySix"
@@ -225,31 +195,27 @@
             app:layout_constraintStart_toEndOf="@+id/keyFour"
             app:layout_constraintTop_toBottomOf="@+id/keyOne" />
 
-        <TextView
+        <Button
             android:id="@+id/keySix"
             android:layout_width="140dp"
             android:layout_height="130dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/border_calculate_element"
-            android:gravity="center"
             android:text="@string/calc_six"
-            android:textAlignment="center"
             android:textColor="@color/default_dark"
             android:textSize="52sp"
-            app:layout_constraintEnd_toStartOf="@+id/keyMutiply"
+            app:layout_constraintEnd_toStartOf="@+id/keyMultiply"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/keyFive"
             app:layout_constraintTop_toBottomOf="@+id/keyOne" />
 
-        <TextView
+        <Button
             android:id="@+id/keyTwo"
             android:layout_width="140dp"
             android:layout_height="130dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/border_calculate_element"
-            android:gravity="center"
             android:text="@string/calc_two"
-            android:textAlignment="center"
             android:textColor="@color/default_dark"
             android:textSize="52sp"
             app:layout_constraintEnd_toStartOf="@+id/keyThree"
@@ -257,15 +223,13 @@
             app:layout_constraintStart_toEndOf="@+id/keyOne"
             app:layout_constraintTop_toBottomOf="@+id/view6" />
 
-        <TextView
+        <Button
             android:id="@+id/keyThree"
             android:layout_width="140dp"
             android:layout_height="130dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/border_calculate_element"
-            android:gravity="center"
             android:text="@string/calc_three"
-            android:textAlignment="center"
             android:textColor="@color/default_dark"
             android:textSize="52sp"
             app:layout_constraintEnd_toStartOf="@+id/keyDivide"
@@ -273,15 +237,13 @@
             app:layout_constraintStart_toEndOf="@+id/keyTwo"
             app:layout_constraintTop_toBottomOf="@+id/view6" />
 
-        <TextView
+        <Button
             android:id="@+id/keyDivide"
             android:layout_width="105dp"
             android:layout_height="130dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/border_calculate_element"
-            android:gravity="center"
             android:text="@string/calc_divide"
-            android:textAlignment="center"
             android:textColor="@color/default_dark"
             android:textSize="52sp"
             app:layout_constraintEnd_toStartOf="@+id/keyDeduct"
@@ -289,15 +251,13 @@
             app:layout_constraintStart_toEndOf="@+id/keyThree"
             app:layout_constraintTop_toBottomOf="@+id/view6" />
 
-        <TextView
+        <Button
             android:id="@+id/keyDeduct"
             android:layout_width="105dp"
             android:layout_height="130dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/border_calculate_element"
-            android:gravity="center"
             android:text="@string/calc_deduct"
-            android:textAlignment="center"
             android:textColor="@color/default_dark"
             android:textSize="52sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -305,46 +265,32 @@
             app:layout_constraintStart_toEndOf="@+id/keyDivide"
             app:layout_constraintTop_toBottomOf="@+id/view6" />
 
-        <TextView
+        <Button
             android:id="@+id/keyCashier"
             android:layout_width="216dp"
             android:layout_height="270dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/border_calculate_cashier"
-            android:gravity="center"
             android:text="@string/calc_cashier"
             android:textColor="@color/default_dark"
             android:textSize="40sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/keyNight"
-            app:layout_constraintTop_toBottomOf="@+id/keyMutiply" />
+            app:layout_constraintStart_toEndOf="@+id/keyNine"
+            app:layout_constraintTop_toBottomOf="@+id/keyMultiply" />
 
-        <LinearLayout
+        <ImageButton
             android:id="@+id/keyDelete"
             android:layout_width="140dp"
             android:layout_height="130dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/border_calculate_element"
-            android:orientation="horizontal"
+            android:contentDescription="@string/del"
+            android:src="@drawable/icon_back_delete"
             app:layout_constraintEnd_toStartOf="@+id/keyCashier"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/keyZero"
-            app:layout_constraintTop_toBottomOf="@+id/keyNight">
-
-            <ImageView
-                android:id="@+id/imageView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="40dp"
-                android:layout_marginTop="45dp"
-                android:contentDescription="@string/del"
-                android:src="@drawable/icon_back_delete"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </LinearLayout>
+            app:layout_constraintTop_toBottomOf="@+id/keyNine" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
