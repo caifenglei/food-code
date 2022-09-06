@@ -15,4 +15,7 @@
     <color name="yellow_2">#ffc300</color>
     <color name="light_yellow">#ffeaaa</color>
     <color name="default_dark">#262626</color>
+    <color name="blue">#38a8ff</color>
+    <color name="green">#97da42</color>
+    <color name="blue_green">#1ed6c0</color>
 </resources>

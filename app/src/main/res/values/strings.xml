@@ -49,6 +49,8 @@
     <string name="del">del</string>
     <string name="waiting_customer_pay">等待客户付款...</string>
     <string name="button_text_cancel_cashier">取消收银</string>
-
-
+    <string name="pay_channel_baoma">宝码</string>
+    <string name="pay_channel_ali">支付宝</string>
+    <string name="pay_channel_wechat">微信</string>
+    <string name="pay_channel_union">银联</string>
 </resources>
