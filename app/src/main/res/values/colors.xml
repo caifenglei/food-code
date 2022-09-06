@@ -9,6 +9,8 @@
     <color name="white">#FFFFFFFF</color>
     <color name="light_gray">#d8dce9</color>
     <color name="medium_gray">#ff9d9da7</color>
+    <color name="bg_gray">#f9f9f9</color>
+    <color name="sub_gray">#9d9da7</color>
     <color name="yellow">#ffc923</color>
     <color name="yellow_2">#ffc300</color>
     <color name="light_yellow">#ffeaaa</color>

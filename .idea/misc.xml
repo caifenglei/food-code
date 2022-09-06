@@ -11,9 +11,11 @@
         <entry key="app/src/main/res/drawable/border_input.xml" value="0.275" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.3595" />
         <entry key="app/src/main/res/drawable/login_round_corner_pane.xml" value="0.3595" />
+        <entry key="app/src/main/res/drawable/shadow_card.xml" value="0.3055" />
         <entry key="app/src/main/res/layout/activity_cashier.xml" value="0.19401041666666666" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.19401041666666666" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.30052083333333335" />
+        <entry key="app/src/main/res/layout/activity_report.xml" value="0.25" />
         <entry key="app/src/main/res/layout/content_cashier.xml" value="0.20182291666666666" />
         <entry key="app/src/main/res/layout/content_consume_record.xml" value="0.20182291666666666" />
         <entry key="app/src/main/res/layout/dialog_cashier_waiting.xml" value="0.20182291666666666" />

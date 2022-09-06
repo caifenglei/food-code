@@ -21,6 +21,11 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_order">订单</string>
+    <string name="title_basic_data">基础数据</string>
+    <string name="title_chart">交易分布图</string>
+    <string name="label_today_total_income">今日总收入</string>
+    <string name="label_today_total_order">今日总订单</string>
+    <string name="label_exclude_refund">（不含退单）</string>
     <string name="button_text_refund">退款</string>
     <string name="button_text_confirm_refund">确认退款</string>
     <string name="button_text_cancel_refund">取消操作</string>
@@ -44,4 +49,6 @@
     <string name="del">del</string>
     <string name="waiting_customer_pay">等待客户付款...</string>
     <string name="button_text_cancel_cashier">取消收银</string>
+
+
 </resources>
