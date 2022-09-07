@@ -20,25 +20,25 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
-        android:layout_marginTop="24dp"
-        android:src="@drawable/logo_baoma"
+        android:src="@drawable/baoma_logo_text"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:text="宝码数智商户系统"
-        android:textColor="#ffffff"
-        android:textSize="28sp"
-        app:layout_constraintBottom_toBottomOf="@+id/view2"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
-        app:layout_constraintTop_toTopOf="@+id/view2" />
+<!--    <TextView-->
+<!--        android:id="@+id/textView4"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="10dp"-->
+<!--        android:text="宝码数智商户系统"-->
+<!--        android:textColor="#ffffff"-->
+<!--        android:textSize="28sp"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/view2"-->
+<!--        app:layout_constraintStart_toEndOf="@+id/imageView"-->
+<!--        app:layout_constraintTop_toTopOf="@+id/view2" />-->
 
     <TextView
         android:id="@+id/textViewTenantName"
@@ -49,7 +49,7 @@
         android:textColor="#ffffff"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="@+id/view2"
-        app:layout_constraintStart_toEndOf="@+id/textView4"
+        app:layout_constraintStart_toEndOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="@+id/view2" />
 
     <!--    <TextView-->
@@ -83,6 +83,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="172dp"
+        android:background="@drawable/border_button_nav"
+        android:drawableLeft="@drawable/icon_cashier"
+        android:drawablePadding="4dp"
+        android:paddingLeft="16dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="12dp"
         android:text="自动收银"
         android:textColor="#ffffff"
         android:textSize="16sp"
@@ -90,28 +97,59 @@
         app:layout_constraintEnd_toEndOf="@+id/view2"
         app:layout_constraintTop_toTopOf="@+id/view2" />
 
-    <TextView
-        android:id="@+id/chartBtn"
+<!--    <TextView-->
+<!--        android:id="@+id/chartBtn"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginEnd="104dp"-->
+<!--        android:text="图表"-->
+<!--        android:textColor="#ffffff"-->
+<!--        android:textSize="16sp"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/view2"-->
+<!--        app:layout_constraintEnd_toEndOf="@+id/view2"-->
+<!--        app:layout_constraintTop_toTopOf="@+id/view2" />-->
+    <ImageView
+        android:id="@+id/viewChartBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="104dp"
-        android:text="图表"
-        android:textColor="#ffffff"
-        android:textSize="16sp"
+        android:background="@drawable/border_button_nav"
+        android:paddingLeft="15dp"
+        android:paddingTop="12dp"
+        android:paddingRight="15dp"
+        android:paddingBottom="12dp"
+        android:src="@drawable/icon_chart"
         app:layout_constraintBottom_toBottomOf="@+id/view2"
         app:layout_constraintEnd_toEndOf="@+id/view2"
         app:layout_constraintTop_toTopOf="@+id/view2" />
 
-    <TextView
-        android:id="@+id/exitBtn"
+<!--    <TextView-->
+<!--        android:id="@+id/exitBtn"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginEnd="48dp"-->
+<!--        android:text="注销"-->
+<!--        android:textColor="#ffffff"-->
+<!--        android:textSize="16sp"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/view2"-->
+<!--        app:layout_constraintEnd_toEndOf="@+id/view2"-->
+<!--        app:layout_constraintTop_toTopOf="@+id/view2" />-->
+
+    <ImageView
+        android:id="@+id/logoutBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="48dp"
-        android:text="注销"
-        android:textColor="#ffffff"
-        android:textSize="16sp"
+        android:layout_marginEnd="42dp"
+        android:background="@drawable/border_button_nav"
+        android:paddingLeft="12dp"
+        android:paddingTop="12dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="12dp"
+        android:src="@drawable/icon_exit"
         app:layout_constraintBottom_toBottomOf="@+id/view2"
         app:layout_constraintEnd_toEndOf="@+id/view2"
         app:layout_constraintTop_toTopOf="@+id/view2" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

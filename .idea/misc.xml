@@ -5,6 +5,7 @@
       <map>
         <entry key="app/src/main/res/drawable-v24/consume_records_round_corner_pane.xml" value="0.403" />
         <entry key="app/src/main/res/drawable/border_button_cancel.xml" value="0.26" />
+        <entry key="app/src/main/res/drawable/border_button_nav.xml" value="0.27" />
         <entry key="app/src/main/res/drawable/border_calculate_amount.xml" value="0.2945" />
         <entry key="app/src/main/res/drawable/border_calculate_cashier.xml" value="0.2945" />
         <entry key="app/src/main/res/drawable/border_calculate_element.xml" value="0.2945" />
