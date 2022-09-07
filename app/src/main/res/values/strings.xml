@@ -25,7 +25,10 @@
     <string name="title_chart">交易分布图</string>
     <string name="label_today_total_income">今日总收入</string>
     <string name="label_today_total_order">今日总订单</string>
+    <string name="label_income_amount">收入金额</string>
+    <string name="label_order_amount">订单数量</string>
     <string name="label_exclude_refund">（不含退单）</string>
+    <string name="unit_order">单</string>
     <string name="button_text_refund">退款</string>
     <string name="button_text_confirm_refund">确认退款</string>
     <string name="button_text_cancel_refund">取消操作</string>

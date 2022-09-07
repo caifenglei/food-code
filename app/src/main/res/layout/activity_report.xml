@@ -136,8 +136,8 @@
 
     </androidx.cardview.widget.CardView>
 
-    <com.github.mikephil.charting.charts.BarChart
-        android:id="@+id/chart1"
+    <com.github.mikephil.charting.charts.CombinedChart
+        android:id="@+id/combinedChart"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="20dp"
@@ -147,54 +147,24 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" >
 
-<!--    <SeekBar-->
-<!--        android:id="@+id/seekBar2"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_alignParentLeft="true"-->
-<!--        android:layout_alignParentBottom="true"-->
-<!--        android:layout_margin="8dp"-->
-<!--        android:layout_toLeftOf="@+id/tvYMax"-->
-<!--        android:max="200"-->
-<!--        android:paddingBottom="12dp"-->
-<!--        app:layout_constraintBottom_toTopOf="@+id/tvYMax"-->
-<!--        app:layout_constraintStart_toEndOf="@+id/fragmentContainerView" />-->
+    </com.github.mikephil.charting.charts.CombinedChart>
 
-<!--    <SeekBar-->
-<!--        android:id="@+id/seekBar1"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_above="@+id/seekBar2"-->
-<!--        android:layout_margin="8dp"-->
-<!--        android:layout_toLeftOf="@+id/tvXMax"-->
-<!--        android:max="1500"-->
-<!--        android:paddingBottom="12dp"-->
-<!--        app:layout_constraintBottom_toTopOf="@+id/tvXMax"-->
-<!--        app:layout_constraintStart_toEndOf="@+id/fragmentContainerView" />-->
+    <TextView
+        android:id="@+id/textView16"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_income_amount"
+        app:layout_constraintStart_toStartOf="@+id/combinedChart"
+        app:layout_constraintTop_toTopOf="@+id/combinedChart" />
 
-<!--    <TextView-->
-<!--        android:id="@+id/tvXMax"-->
-<!--        android:layout_width="60dp"-->
-<!--        android:layout_height="19dp"-->
-<!--        android:layout_alignParentRight="true"-->
-<!--        android:gravity="right"-->
-<!--        android:text="x"-->
-<!--        android:textAppearance="?android:attr/textAppearanceSmall"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent" />-->
-
-<!--    <TextView-->
-<!--        android:id="@+id/tvYMax"-->
-<!--        android:layout_width="60dp"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_alignParentRight="true"-->
-<!--        android:layout_marginBottom="60dp"-->
-<!--        android:gravity="right"-->
-<!--        android:text="y"-->
-<!--        android:textAppearance="?android:attr/textAppearanceSmall"-->
-<!--        app:layout_constraintBottom_toBottomOf="@+id/view5"-->
-<!--        app:layout_constraintStart_toStartOf="parent" />-->
+    <TextView
+        android:id="@+id/textView18"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_order_amount"
+        app:layout_constraintEnd_toEndOf="@+id/combinedChart"
+        app:layout_constraintTop_toTopOf="@+id/combinedChart" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

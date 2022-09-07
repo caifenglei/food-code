@@ -1,10 +1,12 @@
 package com.example.foodcode.custom;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.example.foodcode.R;
 import com.github.mikephil.charting.components.MarkerView;
+import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.CandleEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
@@ -28,15 +30,16 @@ public class ChartBarMarkerView extends MarkerView {
     public void refreshContent(Entry e, Highlight highlight) {
 
         if (e instanceof CandleEntry) {
-
             CandleEntry ce = (CandleEntry) e;
-
             tvContent.setText(Utils.formatNumber(ce.getHigh(), 0, true));
-        } else {
-
+        } else if(e instanceof BarEntry){
             DecimalFormat df = new DecimalFormat("0.00");
             String format = df.format(e.getY());
-            tvContent.setText(format);
+            tvContent.setText("￥" + format);
+        }else {
+            int value = (int) e.getY();
+//            Log.i("highlight", highlight.getAxis().name() + ":" + highlight.getDataIndex());
+            tvContent.setText(String.valueOf(value) + "单");
         }
 
         super.refreshContent(e, highlight);
