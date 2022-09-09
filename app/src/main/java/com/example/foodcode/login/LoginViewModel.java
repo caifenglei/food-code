@@ -1,17 +1,24 @@
 package com.example.foodcode.login;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.util.Patterns;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.foodcode.MainActivity;
 import com.example.foodcode.R;
 import com.example.foodcode.data.LoginRepository;
 import com.example.foodcode.data.Result;
 import com.example.foodcode.data.model.LoggedInUser;
 import com.example.foodcode.utils.HttpClient;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -56,13 +63,50 @@ public class LoginViewModel extends ViewModel {
         params.put("password", password);
         HttpClient.post("/app/merchant/account/login", params, new okhttp3.Callback(){
             @Override
-            public void onFailure(Call call, IOException e){
+            public void onFailure(@NonNull Call call, IOException e){
                 Log.e("LOGIN", "Failure", e);
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException{
                 String responseBody = response.body().string();
+                //TODO
+                try {
+                    final JSONObject responseJson = new JSONObject(responseBody);
+                    Log.i("msgCode", responseJson.getString("msgCode"));
+                    String msgCode = responseJson.getString("msgCode");
+
+                    //switch to UI main thread
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(msgCode.equals("100")){
+                                loginResult.setValue(new LoginResult(new LoggedInUserView("data.getDisplayName()")));
+                            }else{
+                                try {
+                                    loginResult.setValue(new LoginResult(responseJson.getString("message")));
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    });
+
+//                    MainActivity.this.runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            if(msgCode == "1"){
+//
+//                            }else{
+//                                loginResult.setValue(new LoginResult(responseJson.getString("message")));
+//                            }
+//                        }
+//                    });
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
                 Log.i("LOGIN RESP", responseBody);
             }
         });

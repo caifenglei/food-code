@@ -83,12 +83,16 @@ public class MainActivity extends AppCompatActivity {
                     showLoginFailed(loginResult.getError());
                 }
                 if (loginResult.getSuccess() != null) {
+
+                    Intent cashierIntent = new Intent(MainActivity.this, CashierActivity.class);
+                    startActivity(cashierIntent);
+
 //                    updateUiWithUser(loginResult.getSuccess());
                 }
-                setResult(Activity.RESULT_OK);
+//                setResult(Activity.RESULT_OK);
 
                 //Complete and destroy login activity once successful
-                finish();
+//                finish();
             }
         });
 
@@ -142,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
 //        });
     }
 
-    private void showLoginFailed(@StringRes Integer errorString) {
+    private void showLoginFailed(String errorString) {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
     }
 }
