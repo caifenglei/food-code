@@ -12,9 +12,11 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.foodcode.MainActivity;
 import com.example.foodcode.R;
+import com.example.foodcode.data.AuthManager;
 import com.example.foodcode.data.LoginRepository;
 import com.example.foodcode.data.Result;
 import com.example.foodcode.data.model.LoggedInUser;
+import com.example.foodcode.utils.Helper;
 import com.example.foodcode.utils.HttpClient;
 
 import org.json.JSONException;
@@ -29,9 +31,12 @@ import okhttp3.Response;
 
 public class LoginViewModel extends ViewModel {
 
+    private static final String TAG = "---LoginViewModel:";
     private MutableLiveData<LoginFormState> loginFormState = new MutableLiveData<>();
     private MutableLiveData<LoginResult> loginResult = new MutableLiveData<>();
     private LoginRepository loginRepository;
+
+    private AuthManager authManager;
 
     LoginViewModel(LoginRepository loginRepository) {
         this.loginRepository = loginRepository;
@@ -70,10 +75,8 @@ public class LoginViewModel extends ViewModel {
             @Override
             public void onResponse(Call call, Response response) throws IOException{
                 String responseBody = response.body().string();
-                //TODO
                 try {
                     final JSONObject responseJson = new JSONObject(responseBody);
-                    Log.i("msgCode", responseJson.getString("msgCode"));
                     String msgCode = responseJson.getString("msgCode");
 
                     //switch to UI main thread
@@ -81,7 +84,17 @@ public class LoginViewModel extends ViewModel {
                         @Override
                         public void run() {
                             if(msgCode.equals("100")){
-                                loginResult.setValue(new LoginResult(new LoggedInUserView("data.getDisplayName()")));
+
+                                try {
+                                    loginResult.setValue(new LoginResult(responseJson.getJSONObject("responseData")));
+
+//                                    Map<String,String> responseMap = Helper.jsonToMap(responseJson.getJSONObject("responseData"));
+//                                    authManager.setAuthToken(responseMap.get("token"));
+//                                    authManager.setTenantName(responseMap.get("deviceName"));
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
                             }else{
                                 try {
                                     loginResult.setValue(new LoginResult(responseJson.getString("message")));

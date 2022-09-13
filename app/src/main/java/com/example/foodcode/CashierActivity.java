@@ -2,10 +2,12 @@ package com.example.foodcode;
 
 import android.os.Bundle;
 
+import com.example.foodcode.data.AuthManager;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -22,6 +24,8 @@ public class CashierActivity extends AppCompatActivity {
     private AppBarConfiguration appBarConfiguration;
     private ActivityCashierBinding binding;
 
+    private AuthManager authManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +33,8 @@ public class CashierActivity extends AppCompatActivity {
 //        binding = ActivityCashierBinding.inflate(getLayoutInflater());
 //        setContentView(binding.getRoot());
         setContentView(R.layout.activity_cashier);
+
+        authManager = new AuthManager(getApplicationContext());
 
 
         if(savedInstanceState == null){
@@ -41,7 +47,8 @@ public class CashierActivity extends AppCompatActivity {
         }
 
 //        TextView tenantName = findViewById(R.id.textViewTenantName);
-//        tenantName.setText("某集团某分支某摊点某窗口007");
+//        tenantName.setText(authManager.getTenantName());
+        Log.i("CASHIER_ACTIVITY", authManager.getTenantName());
 
 //        setSupportActionBar(binding.toolbar);
 

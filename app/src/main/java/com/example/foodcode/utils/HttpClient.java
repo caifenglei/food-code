@@ -1,5 +1,7 @@
 package com.example.foodcode.utils;
 
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,10 +27,13 @@ public class HttpClient {
                 jsonObject.put(entry.getKey(), entry.getValue());
             }
 
+            Log.i("PARAMS", jsonObject.toString());
             RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
 
             Request request = new Request.Builder()
                     .url(BASE_URL + path)
+                    .header("appSource", "baomaApp")
+                    .addHeader("reqSource", "android")
                     .post(body)
                     .build();
             client.newCall(request).enqueue(callback);

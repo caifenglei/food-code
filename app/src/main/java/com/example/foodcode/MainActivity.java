@@ -3,6 +3,9 @@ package com.example.foodcode;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.datastore.preferences.core.Preferences;
+import androidx.datastore.preferences.rxjava2.RxPreferenceDataStoreBuilder;
+import androidx.datastore.rxjava2.RxDataStore;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -11,6 +14,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -22,29 +26,37 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 //import com.androidnetworking.AndroidNetworking;
+import com.example.foodcode.data.AuthManager;
 import com.example.foodcode.databinding.ActivityMainBinding;
 import com.example.foodcode.login.LoginFormState;
 import com.example.foodcode.login.LoginResult;
 import com.example.foodcode.login.LoginViewModel;
 import com.example.foodcode.login.LoginViewModelFactory;
+import com.example.foodcode.utils.Helper;
+
+import org.json.JSONException;
+
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
     private ActivityMainBinding binding;
 
+    private AuthManager authManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-//        AndroidNetworking
-//        AndroidNetworking.initialize(getApplicationContext());
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(binding.getRoot());
 
+        authManager = new AuthManager(getApplicationContext());
+
         //View Model
+//        RxDataStore<Preferences> dataStore = new RxPreferenceDataStoreBuilder(getApplicationContext(), "settings").build();
         loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory()).get(LoginViewModel.class);
 
         //Form Input
@@ -71,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        //Form Login Result
+        //Form Login Result Observe
         loginViewModel.getLoginResult().observe(this, new Observer<LoginResult>() {
             @Override
             public void onChanged(@Nullable LoginResult loginResult) {
@@ -81,11 +93,21 @@ public class MainActivity extends AppCompatActivity {
                 loadingProgressBar.setVisibility(View.GONE);
                 if (loginResult.getError() != null) {
                     showLoginFailed(loginResult.getError());
-                }
-                if (loginResult.getSuccess() != null) {
+                } else if (loginResult.getSuccess() != null) {
 
-                    Intent cashierIntent = new Intent(MainActivity.this, CashierActivity.class);
-                    startActivity(cashierIntent);
+                    try {
+                        Map<String, Object> responseMap = Helper.jsonToMap(loginResult.getSuccess());
+                        authManager.setAuthToken((String) responseMap.get("token"));
+                        Log.i("SET_TENANT", (String) responseMap.get("deviceName"));
+                        authManager.setTenantName((String) responseMap.get("deviceName"));
+
+                        Intent cashierIntent = new Intent(MainActivity.this, CashierActivity.class);
+                        startActivity(cashierIntent);
+
+                        finish();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
 
 //                    updateUiWithUser(loginResult.getSuccess());
                 }

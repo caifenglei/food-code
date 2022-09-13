@@ -2,12 +2,14 @@ package com.example.foodcode.login;
 
 import androidx.annotation.Nullable;
 
+import org.json.JSONObject;
+
 /**
  * Authentication result : success (user details) or error message.
  */
 public class LoginResult {
     @Nullable
-    private LoggedInUserView success;
+    private JSONObject success;
     @Nullable
     private String error;
 
@@ -15,12 +17,12 @@ public class LoginResult {
         this.error = error;
     }
 
-    LoginResult(@Nullable LoggedInUserView success) {
+    LoginResult(@Nullable JSONObject success) {
         this.success = success;
     }
 
     @Nullable
-    public LoggedInUserView getSuccess() {
+    public JSONObject getSuccess() {
         return success;
     }
 

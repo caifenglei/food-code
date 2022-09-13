@@ -1,6 +1,8 @@
 package com.example.foodcode.login;
 
 import androidx.annotation.NonNull;
+import androidx.datastore.preferences.core.Preferences;
+import androidx.datastore.rxjava2.RxDataStore;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -12,6 +14,12 @@ import com.example.foodcode.data.LoginRepository;
  * Required given LoginViewModel has a non-empty constructor
  */
 public class LoginViewModelFactory implements ViewModelProvider.Factory {
+
+//    RxDataStore<Preferences> dataStore;
+//
+//    public LoginViewModelFactory(RxDataStore<Preferences> dataStore) {
+//        this.dataStore = dataStore;
+//    }
 
     @NonNull
     @Override

@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextClock;
 import android.widget.TextView;
 
+import com.example.foodcode.data.AuthManager;
 import com.example.foodcode.databinding.FragmentStatusBarBinding;
 
 /**
@@ -22,6 +23,8 @@ public class StatusBarFragment extends Fragment {
     private FragmentStatusBarBinding binding;
     private View rootView;
 
+    private AuthManager authManager;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +33,8 @@ public class StatusBarFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        authManager = new AuthManager(getActivity().getApplicationContext());
 
 //        TextView textClock = getView().findViewById(R.id.textViewDatetime);
 //        textClock.setText("某集团某分支某摊点某窗口007");
@@ -42,7 +47,8 @@ public class StatusBarFragment extends Fragment {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_status_bar, container, false);
         TextView tenantName = rootView.findViewById(R.id.textViewTenantName);
-        tenantName.setText("某集团某分支某摊点某窗口007");
+//        tenantName.setText("某集团某分支某摊点某窗口007");
+        tenantName.setText(authManager.getTenantName());
 
         return rootView;
 

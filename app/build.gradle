@@ -48,6 +48,12 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp")
     implementation("com.squareup.okhttp3:logging-interceptor")
 
+    // Preferences DataStore
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
+    // optional - RxJava2 support
+    implementation "androidx.datastore:datastore-preferences-rxjava2:1.0.0"
+
+
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
