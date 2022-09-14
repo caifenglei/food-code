@@ -1,21 +1,36 @@
 package com.example.foodcode;
 
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.hardware.Camera;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import org.json.JSONObject;
+import com.example.foodcode.sunmi.ScanCode;
+import com.example.foodcode.sunmi.Sound;
+import com.example.foodcode.utils.BitmapTransformUtils;
+import com.sunmi.scan.Image;
+import com.sunmi.scan.Symbol;
+import com.sunmi.scan.SymbolSet;
 
+import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -26,9 +41,18 @@ import java.util.Objects;
 /**
  * A calculator
  */
-public class CalculatorFragment extends Fragment {
+public class CalculatorFragment extends Fragment implements SurfaceHolder.Callback {
 
     private static final int START_SCAN = 0x0001;
+
+    private final int RESULT_LOAD_IMAGE = 44;
+    private final int RESULT_OK = 1;
+    private static ScanCode scanCode = null;
+    private AsyncDecode asyncDecode = null;
+    private static Sound sound = null;
+    private SurfaceView mSurfaceView;
+    private SurfaceHolder mSurfaceHolder;
+
 
     Double calResult = 0.00;
     String numberStack = "";
@@ -43,7 +67,10 @@ public class CalculatorFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
+
     }
 
     @Override
@@ -51,6 +78,20 @@ public class CalculatorFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         fragmentView = inflater.inflate(R.layout.fragment_calculator, container, false);
+
+        //Code Scan
+        asyncDecode = new AsyncDecode();
+        scanCode = new ScanCode();
+
+        mSurfaceView = (SurfaceView) fragmentView.findViewById(R.id.preview);
+        mSurfaceHolder = mSurfaceView.getHolder();
+        mSurfaceView.setFocusable(true);
+        mSurfaceHolder.addCallback(this);
+
+        sound = new Sound(this.getActivity());
+        sound.addSound(0, R.raw.beep);
+
+        //Calculator
         calResultView = fragmentView.findViewById(R.id.amountResult);
 
         Button keyOne = fragmentView.findViewById(R.id.keyOne);
@@ -198,32 +239,15 @@ public class CalculatorFragment extends Fragment {
             waitingCashierDialog.show(getParentFragmentManager(), "refund_dialog");
 
             //内部集成的扫码模块
-            Intent intent = new Intent("com.summi.scan");
-            intent.setPackage("com.sunmi.sunmiqrcodescanner");
-            startActivityForResult(intent, START_SCAN);
+//            Intent intent = new Intent("com.summi.scan");
+//            intent.setPackage("com.sunmi.sunmiqrcodescanner");
+//            startActivityForResult(intent, START_SCAN);
 
             //扫码底座接入
-            
+            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(intent, RESULT_LOAD_IMAGE);
         } else {
             Log.i("cashier", "no Money to pay");
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data){
-        super.onActivityResult(resultCode, resultCode, data);
-        Log.i("SCAN_RESULT", String.valueOf(resultCode));
-//        Log.i("SCAN_RESULT2", data.getDataString());
-        if(resultCode == 1 && data != null){
-            Bundle bundle = data.getExtras();
-//            ArrayList result = (ArrayList) bundle.getSerializable("data");
-            ArrayList<HashMap<String, String>> result = (ArrayList<HashMap<String, String>>) bundle.getSerializable("data");
-            Iterator<HashMap<String, String>> it = result.iterator();
-            while (it.hasNext()) {
-                HashMap<String, String> hashMap = it.next();
-                Log.i("sunmi", (String) hashMap.get("TYPE"));//扫码类型
-                Log.i("sunmi", (String) hashMap.get("VALUE"));//扫码结果
-            }
         }
     }
 
@@ -264,5 +288,178 @@ public class CalculatorFragment extends Fragment {
 
 //        Log.i("FFF", String.valueOf(value) + "," + String.valueOf(bd) + "," + String.valueOf(calResult) + "|" + format);
         return format;
+    }
+
+
+    //摄像头集成模块回调
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data){
+//        super.onActivityResult(resultCode, resultCode, data);
+//        Log.i("SCAN_RESULT", String.valueOf(resultCode));
+//        if(resultCode == 1 && data != null){
+//            Bundle bundle = data.getExtras();
+//            ArrayList<HashMap<String, String>> result = (ArrayList<HashMap<String, String>>) bundle.getSerializable("data");
+//            Iterator<HashMap<String, String>> it = result.iterator();
+//            while (it.hasNext()) {
+//                HashMap<String, String> hashMap = it.next();
+//                Log.i("sunmi", (String) hashMap.get("TYPE"));//扫码类型
+//                Log.i("sunmi", (String) hashMap.get("VALUE"));//扫码结果
+//            }
+//        }
+//    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && data != null) {
+
+            Uri selectedImage = data.getData();
+            ContentResolver cr = getActivity().getContentResolver();
+            Bitmap bitmap = null;
+
+            try {
+                bitmap = BitmapFactory.decodeStream(cr.openInputStream(selectedImage));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
+            Image source = BitmapTransformUtils.getImageByBitmap(bitmap);
+            scanCode.close();
+            scanCode.open(previewCallback, mSurfaceHolder);
+            scanCode.setAutoFocus();
+
+            asyncDecode = new AsyncDecode();
+            asyncDecode.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, source);
+        }
+    }
+
+
+    //=========scan related=========
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+
+        scanCode.setPreviewDisplay(mSurfaceHolder);
+    }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
+        if (scanCode.getPedestalStaus() == ScanCode.PEDEST_NONE) scanCode.autoFocus();
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+
+    }
+
+    Camera.PreviewCallback previewCallback = new Camera.PreviewCallback() {
+
+        public void onPreviewFrame(byte[] data, Camera camera) {
+
+            if (asyncDecode.isStoped()) {
+                asyncDecode = new AsyncDecode();
+                asyncDecode.execute(scanCode.setData(camera, data));//调用异步执行解码
+            }
+        }
+    };
+
+    private class AsyncDecode extends AsyncTask<Image, Void, String> {
+
+        private boolean stoped = true;
+        private StringBuilder sb = new StringBuilder();
+
+        @Override
+        protected String doInBackground(Image... params) {
+
+            stoped = false;
+
+            try {
+                Log.i("---STATUS", String.valueOf(scanCode.getPedestalStaus()));
+//                if (scanCode.getPedestalStaus() == ScanCode.PEDEST_NONE) {
+//                    if (winDialog != null) {
+//                        if (winDialog.getDialogStatus(tradewaitviewname)) {
+//                            isCharge = false;
+//                            isPlaying = false;
+//                            manager.cancel(ID);
+//                        }
+//                    }
+//                }else {
+//                    if (winDialog != null) {
+//                        if (winDialog.getDialogStatus(tradewaitviewname)) {
+//                            if (!stopstate) {
+//                                manager.notify(ID, builder.build());
+//                            }
+//                        }
+//                    }
+//                }
+
+                Image data = params[0];//获取灰度数据
+                long startTimeMillis = System.currentTimeMillis();
+
+                int nsyms = scanCode.scanImage(data);
+
+                long endTimeMillis = System.currentTimeMillis();
+                long cost_time = endTimeMillis - startTimeMillis;
+
+                sb.append("");
+
+                if (nsyms > 0) {
+                    sb.append("耗时: " + String.valueOf(cost_time) + " ms \n");
+
+                    SymbolSet syms = scanCode.getResults();  //获取解码结果
+
+                    for (Symbol sym : syms) {
+                        sb.append("码制: " + sym.getSymbolName() + "\n");
+                        sb.append("内容: " + sym.getResult() + "\n");
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return sb.toString();
+
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+
+            super.onPostExecute(result);
+
+            if (result == null || result.equals("")) {
+                stoped = true;
+                return;
+            }
+
+//            tvInfo.setText(result);
+            Log.i("---onPostExecute", result);
+
+            //打印
+//            printtradeinfo();
+
+//            if (winDialog != null) {
+//                winDialog.Destroy();
+//                winDialog = null;
+//                waittradestate = true;
+//            }
+
+            scanCode.close();
+//            keyboardview.setVisibility(View.VISIBLE);
+//            tradescanview.setVisibility(View.GONE);
+//
+//            tradesuccessstate = true;
+//
+//            winDialog = WinDialog.newWinDialog(true, R.layout.tradesuccess);
+//            winDialog.show(getFragmentManager(), successviewname);
+
+            sound.playsound(R.raw.tradeseccuss);
+
+            stoped = true;
+        }
+
+        public boolean isStoped() {
+
+            return stoped;
+        }
     }
 }

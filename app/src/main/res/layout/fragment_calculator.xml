@@ -292,6 +292,15 @@
             app:layout_constraintStart_toEndOf="@+id/keyZero"
             app:layout_constraintTop_toBottomOf="@+id/keyNine" />
 
+        <SurfaceView
+            android:id="@+id/preview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            app:layout_constraintEnd_toEndOf="@+id/view6"
+            app:layout_constraintTop_toTopOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>
