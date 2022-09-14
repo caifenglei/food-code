@@ -2,14 +2,10 @@ package com.example.foodcode;
 
 import android.os.Bundle;
 
-import com.example.foodcode.data.AuthManager;
-import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
 
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
@@ -24,8 +20,6 @@ public class CashierActivity extends AppCompatActivity {
     private AppBarConfiguration appBarConfiguration;
     private ActivityCashierBinding binding;
 
-    private AuthManager authManager;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,9 +27,6 @@ public class CashierActivity extends AppCompatActivity {
 //        binding = ActivityCashierBinding.inflate(getLayoutInflater());
 //        setContentView(binding.getRoot());
         setContentView(R.layout.activity_cashier);
-
-        authManager = new AuthManager(getApplicationContext());
-
 
         if(savedInstanceState == null){
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -48,8 +39,6 @@ public class CashierActivity extends AppCompatActivity {
 
 //        TextView tenantName = findViewById(R.id.textViewTenantName);
 //        tenantName.setText(authManager.getTenantName());
-        Log.i("CASHIER_ACTIVITY", authManager.getTenantName());
-
 //        setSupportActionBar(binding.toolbar);
 
 //        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_cashier);

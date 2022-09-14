@@ -3,7 +3,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.foodcode">
 
-    <uses-permission android:name="android.permission.INTERNET" />
+<!--    <uses-permission android:name="android.permission.INTERNET" />-->
+<!--    <uses-permission android:name="android.permission.VIBRATE" />-->
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -13,6 +26,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.FoodCode"
+        android:extractNativeLibs="true"
         tools:targetApi="31">
         <activity
             android:name=".ReportActivity"
@@ -48,6 +62,16 @@
              <action android:name="android.intent.action.MAIN" />
              <category android:name="android.intent.category.LAUNCHER" />
              </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".activity.ScanActivity"
+            android:screenOrientation="portrait"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.sunmi.scan" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
     </application>
 

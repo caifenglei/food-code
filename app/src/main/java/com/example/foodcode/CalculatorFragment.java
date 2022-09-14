@@ -1,5 +1,6 @@
 package com.example.foodcode;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.widget.AppCompatImageButton;
@@ -11,18 +12,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
+
+import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Objects;
 
 /**
  * A calculator
  */
 public class CalculatorFragment extends Fragment {
+
+    private static final int START_SCAN = 0x0001;
 
     Double calResult = 0.00;
     String numberStack = "";
@@ -190,8 +196,34 @@ public class CalculatorFragment extends Fragment {
             Log.i("cashier", String.valueOf(moneyToPay));
             DialogFragment waitingCashierDialog = new CashierWaitingDialogFragment();
             waitingCashierDialog.show(getParentFragmentManager(), "refund_dialog");
+
+            //内部集成的扫码模块
+            Intent intent = new Intent("com.summi.scan");
+            intent.setPackage("com.sunmi.sunmiqrcodescanner");
+            startActivityForResult(intent, START_SCAN);
+
+            //扫码底座接入
+            
         } else {
             Log.i("cashier", "no Money to pay");
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(resultCode, resultCode, data);
+        Log.i("SCAN_RESULT", String.valueOf(resultCode));
+//        Log.i("SCAN_RESULT2", data.getDataString());
+        if(resultCode == 1 && data != null){
+            Bundle bundle = data.getExtras();
+//            ArrayList result = (ArrayList) bundle.getSerializable("data");
+            ArrayList<HashMap<String, String>> result = (ArrayList<HashMap<String, String>>) bundle.getSerializable("data");
+            Iterator<HashMap<String, String>> it = result.iterator();
+            while (it.hasNext()) {
+                HashMap<String, String> hashMap = it.next();
+                Log.i("sunmi", (String) hashMap.get("TYPE"));//扫码类型
+                Log.i("sunmi", (String) hashMap.get("VALUE"));//扫码结果
+            }
         }
     }
 

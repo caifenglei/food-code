@@ -1,15 +1,10 @@
 package com.example.foodcode;
 
 import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.datastore.preferences.core.Preferences;
-import androidx.datastore.preferences.rxjava2.RxPreferenceDataStoreBuilder;
-import androidx.datastore.rxjava2.RxDataStore;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -25,7 +20,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-//import com.androidnetworking.AndroidNetworking;
 import com.example.foodcode.data.AuthManager;
 import com.example.foodcode.databinding.ActivityMainBinding;
 import com.example.foodcode.login.LoginFormState;

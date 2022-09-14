@@ -1,8 +1,6 @@
 package com.example.foodcode.login;
 
 import androidx.annotation.NonNull;
-import androidx.datastore.preferences.core.Preferences;
-import androidx.datastore.rxjava2.RxDataStore;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 

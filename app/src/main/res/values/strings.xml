@@ -57,4 +57,7 @@
     <string name="pay_channel_ali">支付宝</string>
     <string name="pay_channel_wechat">微信</string>
     <string name="pay_channel_union">银联</string>
+
+    <string name="codebar_scan">Scanning</string>
+    <string name="album">album</string>
 </resources>
