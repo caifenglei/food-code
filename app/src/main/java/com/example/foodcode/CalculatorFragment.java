@@ -1,10 +1,13 @@
 package com.example.foodcode;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.Camera;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -44,6 +47,7 @@ import java.util.Objects;
 public class CalculatorFragment extends Fragment implements SurfaceHolder.Callback {
 
     private static final int START_SCAN = 0x0001;
+    private static final String USB_DEVICE_ATTACHED = "android.hardware.usb.action.USB_DEVICE_ATTACHED";
 
     private final int RESULT_LOAD_IMAGE = 44;
     private final int RESULT_OK = 1;
@@ -52,6 +56,8 @@ public class CalculatorFragment extends Fragment implements SurfaceHolder.Callba
     private static Sound sound = null;
     private SurfaceView mSurfaceView;
     private SurfaceHolder mSurfaceHolder;
+
+    CashierWaitingDialogFragment waitingPayDialog;
 
 
     Double calResult = 0.00;
@@ -83,13 +89,16 @@ public class CalculatorFragment extends Fragment implements SurfaceHolder.Callba
         asyncDecode = new AsyncDecode();
         scanCode = new ScanCode();
 
-        mSurfaceView = (SurfaceView) fragmentView.findViewById(R.id.preview);
-        mSurfaceHolder = mSurfaceView.getHolder();
-        mSurfaceView.setFocusable(true);
-        mSurfaceHolder.addCallback(this);
+//        mSurfaceView = (SurfaceView) fragmentView.findViewById(R.id.preview);
+//        mSurfaceHolder = mSurfaceView.getHolder();
+//        mSurfaceView.setFocusable(true);
+//        mSurfaceHolder.addCallback(this);
 
         sound = new Sound(this.getActivity());
         sound.addSound(0, R.raw.beep);
+
+        initView();
+        initAction();
 
         //Calculator
         calResultView = fragmentView.findViewById(R.id.amountResult);
@@ -131,6 +140,46 @@ public class CalculatorFragment extends Fragment implements SurfaceHolder.Callba
         keyCashier.setOnClickListener(onCalculatorKeyClick);
 
         return fragmentView;
+    }
+
+    private void initView(){
+        waitingPayDialog = new CashierWaitingDialogFragment();
+    }
+
+    private void initAction(){
+
+        waitingPayDialog.setCompleteListener(new CashierWaitingDialogFragment.OnCompleteListener() {
+            @Override
+            public void onCancel() {
+//                if (menus.size() > 0) {
+//                    if (videoMenuDisplay != null) {
+//                        videoMenuDisplay.show();
+//                    }
+//                }
+                Log.i("COMPLETE", "cancelled");
+            }
+
+            @Override
+            public void onSuccess(final int payMode) {
+                Log.i("COMPLETE", "success");
+//                playSound(payMode);
+//                myHandler.postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        paySuccessToPrinter(payMode);
+//                        payDialog.setPhoneNumber("");
+//
+//                    }
+//                }, 1000);
+            }
+
+            @Override
+            public void onComplete(int payMode) {
+                Log.i("COMPLETE", "complete");
+//                delectProduct();
+//                payCompleteToReMenu();
+            }
+        });
     }
 
     private View.OnClickListener onCalculatorKeyClick = new View.OnClickListener() {
@@ -235,8 +284,11 @@ public class CalculatorFragment extends Fragment implements SurfaceHolder.Callba
         }
         if (moneyToPay > 0) {
             Log.i("cashier", String.valueOf(moneyToPay));
-            DialogFragment waitingCashierDialog = new CashierWaitingDialogFragment();
-            waitingCashierDialog.show(getParentFragmentManager(), "refund_dialog");
+
+            Bundle bundle = new Bundle();
+            bundle.putString("money", String.valueOf(moneyToPay));
+            waitingPayDialog.setArguments(bundle);
+            waitingPayDialog.show(getParentFragmentManager(), "refund_dialog");
 
             //内部集成的扫码模块
 //            Intent intent = new Intent("com.summi.scan");
@@ -244,8 +296,24 @@ public class CalculatorFragment extends Fragment implements SurfaceHolder.Callba
 //            startActivityForResult(intent, START_SCAN);
 
             //扫码底座接入
-            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            startActivityForResult(intent, RESULT_LOAD_IMAGE);
+//            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//            startActivityForResult(intent, RESULT_LOAD_IMAGE);
+
+//            Intent intent = new Intent(USB_DEVICE_ATTACHED, 1);
+//            Intent intent = new Intent(USB_DEVICE_ATTACHED);
+//            UsbDevice device = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+//            String deviceName = device.getDeviceName();
+//            Log.i("DEVICE", deviceName);
+//            UsbManager usbManager = (UsbManager) getActivity().getSystemService(Context.USB_SERVICE);
+//            HashMap<String, UsbDevice> deviceList = usbManager.getDeviceList();
+//            Iterator<UsbDevice> deviceIterator = deviceList.values().iterator();
+//            while(deviceIterator.hasNext()){
+//                UsbDevice device = deviceIterator.next();
+//                //your code
+//                Log.i("DEVICE", device.getDeviceName() + " - VID:" + device.getVendorId() + ", PID:" + device.getProductId());
+//            }
+
+
         } else {
             Log.i("cashier", "no Money to pay");
         }

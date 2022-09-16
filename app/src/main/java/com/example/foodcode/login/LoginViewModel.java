@@ -1,5 +1,6 @@
 package com.example.foodcode.login;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -37,9 +38,11 @@ public class LoginViewModel extends ViewModel {
     private LoginRepository loginRepository;
 
     private AuthManager authManager;
+    private Context context;
 
-    LoginViewModel(LoginRepository loginRepository) {
+    LoginViewModel(LoginRepository loginRepository, Context context) {
         this.loginRepository = loginRepository;
+        this.context = context;
     }
 
     public LiveData<LoginFormState> getLoginFormState() {
@@ -66,7 +69,7 @@ public class LoginViewModel extends ViewModel {
         Map<String, String> params = new HashMap<>();
         params.put("account", username);
         params.put("password", password);
-        HttpClient.post("/app/merchant/account/login", params, new okhttp3.Callback(){
+        new HttpClient(context).post("/app/merchant/account/login", params, new okhttp3.Callback(){
             @Override
             public void onFailure(@NonNull Call call, IOException e){
                 Log.e("LOGIN", "Failure", e);

@@ -14,6 +14,7 @@ public class AuthManager {
 
     private static final String KEY_AUTH_TOKEN = "accessAuthToken";
     private static final String KEY_TENANT_NAME = "tenantName";
+    private static final String KEY_DEVICE_CODE = "deviceCode";
 
 
     public AuthManager(Context context) {
@@ -38,5 +39,14 @@ public class AuthManager {
 
     public String getTenantName() {
         return sharedPreferences.getString(KEY_TENANT_NAME, "");
+    }
+
+    public void setDeviceCode(String deviceCode) {
+        editor.putString(KEY_DEVICE_CODE, deviceCode);
+        editor.commit();
+    }
+
+    public String getDeviceCode() {
+        return sharedPreferences.getString(KEY_DEVICE_CODE, "");
     }
 }

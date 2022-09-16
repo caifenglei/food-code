@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
         //View Model
 //        RxDataStore<Preferences> dataStore = new RxPreferenceDataStoreBuilder(getApplicationContext(), "settings").build();
-        loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory()).get(LoginViewModel.class);
+        loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory(getApplicationContext())).get(LoginViewModel.class);
 
         //Form Input
         final EditText usernameEditText = binding.textPersonName;
@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
                         authManager.setAuthToken((String) responseMap.get("token"));
                         Log.i("SET_TENANT", (String) responseMap.get("deviceName"));
                         authManager.setTenantName((String) responseMap.get("deviceName"));
+                        authManager.setDeviceCode((String) responseMap.get("deviceCode"));
 
                         Intent cashierIntent = new Intent(MainActivity.this, CashierActivity.class);
                         startActivity(cashierIntent);
