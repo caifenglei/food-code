@@ -6,6 +6,8 @@ import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.example.foodcode.login.LoginResult;
 import com.example.foodcode.utils.HttpClient;
@@ -20,31 +22,38 @@ import java.util.Map;
 import okhttp3.Call;
 import okhttp3.Response;
 
-public class PaymentService {
+public class PaymentViewModel {
 
     private AuthManager authManager;
 
     private Context context;
 
-    public PaymentService(Context context){
+    private MutableLiveData<PaymentResult> paymentResult = new MutableLiveData<>();
+
+    public PaymentViewModel(Context context) {
         this.authManager = new AuthManager(context);
         this.context = context;
     }
 
-    public void receiveMoney(String qrCode, String amount){
+    //payment async callback result
+    public LiveData<PaymentResult> getPaymentResult(){
+        return paymentResult;
+    }
+
+    public void receiveMoney(String qrCode, String amount) {
 
         Map<String, String> params = new HashMap<>();
         params.put("qrCode", qrCode);
         params.put("amount", amount);
         params.put("terminalNum", authManager.getDeviceCode());
-        new HttpClient(context).post("/app/merchant/payment/pay", params, new okhttp3.Callback(){
+        new HttpClient(context).post("/app/merchant/payment/pay", params, new okhttp3.Callback() {
             @Override
-            public void onFailure(@NonNull Call call, IOException e){
+            public void onFailure(@NonNull Call call, IOException e) {
                 Log.e("RECEIVE", "Failure", e);
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException{
+            public void onResponse(Call call, Response response) throws IOException {
                 String responseBody = response.body().string();
                 try {
                     final JSONObject responseJson = new JSONObject(responseBody);
@@ -54,30 +63,23 @@ public class PaymentService {
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
-                            if(msgCode.equals("100")){
-
-                            }else{
-
+                            try {
+                                if (msgCode.equals("100")) {
+                                    paymentResult.setValue(new PaymentResult(responseJson.getJSONObject("responseData")));
+                                } else {
+                                    paymentResult.setValue(new PaymentResult(responseJson.getString("message")));
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
                         }
                     });
-
-//                    MainActivity.this.runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            if(msgCode == "1"){
-//
-//                            }else{
-//                                loginResult.setValue(new LoginResult(responseJson.getString("message")));
-//                            }
-//                        }
-//                    });
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
-                Log.i("RECEIVE RESP", responseBody);
+                Log.i("PAYMENT RESP", responseBody);
             }
         });
     }

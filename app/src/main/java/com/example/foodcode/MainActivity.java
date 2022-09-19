@@ -92,24 +92,18 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         Map<String, Object> responseMap = Helper.jsonToMap(loginResult.getSuccess());
                         authManager.setAuthToken((String) responseMap.get("token"));
-                        Log.i("SET_TENANT", (String) responseMap.get("deviceName"));
                         authManager.setTenantName((String) responseMap.get("deviceName"));
                         authManager.setDeviceCode((String) responseMap.get("deviceCode"));
 
                         Intent cashierIntent = new Intent(MainActivity.this, CashierActivity.class);
                         startActivity(cashierIntent);
 
+                        //Complete and destroy login activity once successful
                         finish();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
-//                    updateUiWithUser(loginResult.getSuccess());
                 }
-//                setResult(Activity.RESULT_OK);
-
-                //Complete and destroy login activity once successful
-//                finish();
             }
         });
 

@@ -15,6 +15,7 @@ import android.os.Bundle;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 
 import android.provider.MediaStore;
 import android.util.Log;
@@ -26,6 +27,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.foodcode.data.PaymentResult;
+import com.example.foodcode.data.PaymentViewModel;
 import com.example.foodcode.sunmi.ScanCode;
 import com.example.foodcode.sunmi.Sound;
 import com.example.foodcode.utils.BitmapTransformUtils;
@@ -56,6 +59,7 @@ public class CalculatorFragment extends Fragment implements SurfaceHolder.Callba
     private static Sound sound = null;
     private SurfaceView mSurfaceView;
     private SurfaceHolder mSurfaceHolder;
+    private PaymentViewModel paymentViewModel;
 
     CashierWaitingDialogFragment waitingPayDialog;
 
@@ -84,6 +88,8 @@ public class CalculatorFragment extends Fragment implements SurfaceHolder.Callba
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         fragmentView = inflater.inflate(R.layout.fragment_calculator, container, false);
+
+        paymentViewModel = new PaymentViewModel(getActivity().getApplicationContext());
 
         //Code Scan
         asyncDecode = new AsyncDecode();
@@ -173,14 +179,35 @@ public class CalculatorFragment extends Fragment implements SurfaceHolder.Callba
 //                }, 1000);
             }
 
+            //complete QR scan
             @Override
-            public void onComplete(int payMode) {
+            public void onComplete(String payQrCode, String money) {
                 Log.i("COMPLETE", "complete");
-//                delectProduct();
-//                payCompleteToReMenu();
+
+                //API to get money
+                paymentViewModel.receiveMoney(payQrCode, money);
+            }
+        });
+
+        //listener to receive money
+        paymentViewModel.getPaymentResult().observe(getViewLifecycleOwner(), new Observer<PaymentResult>() {
+            @Override
+            public void onChanged(PaymentResult paymentResult) {
+                Log.i("OBSERVE", "payment result changed");
+                if(paymentResult == null){
+                    return;
+                }
+
+                if(paymentResult.getError() != null){
+                    waitingPayDialog.receiveMoneyFail(paymentResult.getError());
+                }else{
+                    //refresh list
+                    waitingPayDialog.receiveMoneySuccess();
+                }
             }
         });
     }
+
 
     private View.OnClickListener onCalculatorKeyClick = new View.OnClickListener() {
         @Override

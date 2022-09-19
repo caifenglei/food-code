@@ -1,16 +1,11 @@
 package com.example.foodcode;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialogFragment;
-import androidx.fragment.app.DialogFragment;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -22,8 +17,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.foodcode.data.PaymentService;
-
 /**
  * create an instance of this fragment.
  */
@@ -33,7 +26,10 @@ public class CashierWaitingDialogFragment extends AppCompatDialogFragment {
     private StringBuilder sb = new StringBuilder();
     private Handler myHandler = new Handler(Looper.getMainLooper());
 
+    private Boolean waitReceiving = false;
+
     Button cancelButton;
+    Button confirmDialogButton;
     TextView cashierText;
 
     public interface OnCompleteListener {
@@ -41,18 +37,17 @@ public class CashierWaitingDialogFragment extends AppCompatDialogFragment {
 
         void onSuccess(int payMode);
 
-        void onComplete(int payMode);
+        void onComplete(String payQrCode, String money);
     }
 
     public OnCompleteListener completeListener = null;
 
     public void setCompleteListener(OnCompleteListener completeListener) {
         this.completeListener = completeListener;
-
     }
 
     @Override
-    public void onStart(){
+    public void onStart() {
         super.onStart();
 
         Dialog dialog = getDialog();
@@ -67,54 +62,37 @@ public class CashierWaitingDialogFragment extends AppCompatDialogFragment {
         return inflater.inflate(R.layout.dialog_cashier_waiting, container, false);
     }
 
-//    @NonNull
-//    @Override
-//    public Dialog onCreateDialog(Bundle savedInstanceState) {
-//        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//
-//        LayoutInflater inflater = requireActivity().getLayoutInflater();
-//        View contentView = inflater.inflate(R.layout.dialog_cashier_waiting, null);
-//        builder.setView(contentView);
-//
-//        Button cancelButton = contentView.findViewById(R.id.cancelCashierBtn);
-//        cancelButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                CashierWaitingDialogFragment.this.getDialog().cancel();
-//            }
-//        });
-//
-//        Dialog dialog = builder.create();
-//        dialog.setCancelable(false);
-//        dialog.setCanceledOnTouchOutside(false);
-//        return dialog;
-//    }
-
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState){
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initView(view);
         initAction();
         initData();
     }
 
-    private void initView(View view){
+    private void initView(View view) {
         cancelButton = view.findViewById(R.id.cancelCashierBtn);
+        confirmDialogButton = view.findViewById(R.id.confirmDialogBtn);
         cashierText = view.findViewById(R.id.cashierText);
     }
 
     private void initAction() {
 
+        waitReceiving = true;
+
         //handle key down event action
         getDialog().setOnKeyListener(new DialogInterface.OnKeyListener() {
             @Override
             public boolean onKey(DialogInterface dialogInterface, int i, KeyEvent event) {
+                if (!waitReceiving) {
+                    return false;
+                }
                 int action = event.getAction();
                 switch (action) {
                     case KeyEvent.ACTION_DOWN:
                         int unicodeChar = event.getUnicodeChar();
 //                        Log.i("CHAR", String.valueOf(unicodeChar));
-                        if(unicodeChar != 0) {
+                        if (unicodeChar != 0) {
                             sb.append((char) unicodeChar);
                         }
                         int keyCode = event.getKeyCode();
@@ -145,6 +123,7 @@ public class CashierWaitingDialogFragment extends AppCompatDialogFragment {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                waitReceiving = false;
 //                CashierWaitingDialogFragment.this.getDialog().cancel();
                 if (completeListener != null) {
                     completeListener.onCancel();
@@ -152,9 +131,16 @@ public class CashierWaitingDialogFragment extends AppCompatDialogFragment {
                 dismiss();
             }
         });
+
+        confirmDialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismiss();
+            }
+        });
     }
 
-    private void initData(){
+    private void initData() {
         Bundle bundle = getArguments();
         moneyToPay = bundle.getString("money");
     }
@@ -167,29 +153,23 @@ public class CashierWaitingDialogFragment extends AppCompatDialogFragment {
         Log.i("PAYCODE", payCode);
         Log.i("MONEY", moneyToPay);
 
-        if(completeListener != null){
-            cashierText.setText(R.string.receiving_customer_pay);
-
-            new PaymentService(getActivity().getApplicationContext()).receiveMoney(payCode, moneyToPay);
-//            completeListener.onSuccess(payMode);
+        cashierText.setText(R.string.receiving_customer_pay);
+        cancelButton.setVisibility(View.GONE);
+        if (completeListener != null) {
+            completeListener.onComplete(payCode, moneyToPay);
         }
-//        if (payment) {
-//            return;
-//        }
-//        if (rbTwo.isChecked()) {
-//            rbOne.setClickable(false);
-//            rbTwo.setClickable(false);
-//            rbthree.setClickable(false);
-//            llyPay.setVisibility(View.GONE);
-//            llyPayComplete.setVisibility(View.VISIBLE);
-//            if (completeListener != null) {
-//                completeListener.onSuccess(payMode);
-//                updatePresentationByPay(payMode);
-//                btnComplete.setText(ResourcesUtils.getString(R.string.tips_confirm) + "(" + payCompleteTime + ")");
-//                paySuccessToAutoComplete();
-//            }
-//
-//        }
+    }
+
+    public void receiveMoneyFail(String message) {
+        cashierText.setText(message);
+        waitReceiving = false;
+        //manual
+        confirmDialogButton.setVisibility(View.VISIBLE);
+    }
+
+    public void receiveMoneySuccess() {
+        waitReceiving = false;
+        dismiss();
     }
 
     private void sendMessageToUser(final String msg) {

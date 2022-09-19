@@ -32,9 +32,25 @@
         android:layout_height="50dp"
         android:layout_marginTop="40dp"
         android:background="@drawable/border_calculate_cashier"
+        android:letterSpacing="0.2"
         android:text="@string/button_text_cancel_cashier"
         android:textColor="#262626"
         android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="@+id/view4"
+        app:layout_constraintStart_toStartOf="@+id/view4"
+        app:layout_constraintTop_toBottomOf="@+id/cashierText" />
+
+    <Button
+        android:id="@+id/confirmDialogBtn"
+        android:layout_width="380dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/border_calculate_cashier"
+        android:letterSpacing="0.2"
+        android:text="@string/button_text_confirm"
+        android:textColor="#262626"
+        android:textSize="18sp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@+id/view4"
         app:layout_constraintStart_toStartOf="@+id/view4"
         app:layout_constraintTop_toBottomOf="@+id/cashierText" />
