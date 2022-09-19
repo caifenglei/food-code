@@ -31,12 +31,12 @@ public class HttpClient {
         this.authManager = new AuthManager(context);
     }
 
-    public void post(String path, Map<String, String> params, okhttp3.Callback callback) {
+    public void post(String path, Map<String, Object> params, okhttp3.Callback callback) {
         OkHttpClient client = new OkHttpClient();
 
         JSONObject jsonObject = new JSONObject();
         try {
-            for (Map.Entry<String, String> entry : params.entrySet()) {
+            for (Map.Entry<String, Object> entry : params.entrySet()) {
                 jsonObject.put(entry.getKey(), entry.getValue());
             }
 

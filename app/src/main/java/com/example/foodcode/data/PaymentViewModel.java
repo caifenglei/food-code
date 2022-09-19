@@ -42,7 +42,7 @@ public class PaymentViewModel {
 
     public void receiveMoney(String qrCode, String amount) {
 
-        Map<String, String> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>();
         params.put("qrCode", qrCode);
         params.put("amount", amount);
         params.put("terminalNum", authManager.getDeviceCode());

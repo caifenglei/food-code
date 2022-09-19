@@ -66,7 +66,7 @@ public class LoginViewModel extends ViewModel {
 
 
         // new try
-        Map<String, String> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>();
         params.put("account", username);
         params.put("password", password);
         new HttpClient(context).post("/app/merchant/account/login", params, new okhttp3.Callback(){

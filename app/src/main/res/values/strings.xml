@@ -21,6 +21,7 @@
     <string name="login_failed">"Login failed"</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="prefix_rmb">￥</string>
     <string name="title_order">订单</string>
     <string name="title_basic_data">基础数据</string>
     <string name="title_chart">交易分布图</string>
@@ -60,6 +61,16 @@
     <string name="pay_channel_ali">支付宝</string>
     <string name="pay_channel_wechat">微信</string>
     <string name="pay_channel_union">银联</string>
+    <string name="pay_channel_visit">来访</string>
+    <string name="pay_channel_partner">常驻</string>
+    <string name="left_bracket">（</string>
+    <string name="right_bracket">）</string>
+    <string name="pay_type_fixed">固定额度</string>
+    <string name="pay_type_temp">临时额度</string>
+    <string name="pay_type_combine">其它组合额度</string>
+    <string name="order_status_normal">其它组合额度</string>
+    <string name="order_status_refunding">退款中</string>
+    <string name="order_status_refunded">已退款</string>
 
     <string name="codebar_scan">Scanning</string>
     <string name="album">album</string>
