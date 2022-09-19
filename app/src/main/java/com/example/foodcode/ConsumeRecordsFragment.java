@@ -2,14 +2,17 @@ package com.example.foodcode;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -47,8 +50,12 @@ public class ConsumeRecordsFragment extends Fragment {
     private RecyclerView.LayoutManager recordsLayoutManager;
     private ConsumeRecordAdapter recordsAdapter;
 
+    private SwipeRefreshLayout swipeRefreshLayout;
+
     private Context context;
     private AuthManager authManager;
+
+    private final int FIRST_PAGE = 1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,15 +67,19 @@ public class ConsumeRecordsFragment extends Fragment {
 //        if (getArguments() != null) {
             // Initialize dataset, this data would usually come from a local content provider or
             // remote server.
-            initRecords();
+//            initRecords();
 //        }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_consume_records, container, false);
+
+        swipeRefreshLayout = rootView.findViewById(R.id.swipeRefreshLayout);
+
         recordsRecyclerView = rootView.findViewById(R.id.recyclerView);
         recordsLayoutManager = new LinearLayoutManager(getActivity());
         int scrollPosition = 0;
@@ -79,7 +90,7 @@ public class ConsumeRecordsFragment extends Fragment {
         recordsAdapter = new ConsumeRecordAdapter(consumeRecordList);
         recordsRecyclerView.setAdapter(recordsAdapter);
 
-        //Swipe
+        //Swipe left
         ItemSwipeController swipeController = new ItemSwipeController(new SwipeActions() {
             @Override
             public void onRefundClicked(int position) {
@@ -97,13 +108,36 @@ public class ConsumeRecordsFragment extends Fragment {
             }
         });
 
+        //Swipe down (pull down)
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeRefreshLayout.setRefreshing(false);
+                refreshRecords();
+            }
+        });
+
+        recordsRecyclerView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(View view, int i, int i1, int i2, int i3) {
+                // TODO
+                Log.i("OnScroll", String.valueOf(i) + "," +  String.valueOf(i1) + "," +  String.valueOf(i2) + "," +  String.valueOf(i3));
+            }
+        });
+
+        fetchRecords(FIRST_PAGE);
+
         return rootView;
     }
 
-    private void initRecords() {
+    private void refreshRecords(){
+        fetchRecords(FIRST_PAGE);
+    }
+
+    private void fetchRecords(int pageNum) {
 
         Map<String, Object> params = new HashMap<>();
-        params.put("pageNo", 1);
+        params.put("pageNo", pageNum);
         params.put("pageSize", 10);
         params.put("deviceCode", authManager.getDeviceCode());
         Log.i("START HTTP", "Order List");
@@ -128,6 +162,7 @@ public class ConsumeRecordsFragment extends Fragment {
                                 if (msgCode.equals("100")) {
                                     JSONObject responseData = responseJson.getJSONObject("responseData");
                                     JSONArray consumeList = responseData.getJSONArray("list");
+                                    List<ConsumeRecord> records = new ArrayList<>();
                                     for(int i = 0; i < consumeList.length(); i++){
                                         JSONObject record = consumeList.getJSONObject(i);
                                         String orderId = record.getString("id");
@@ -145,8 +180,12 @@ public class ConsumeRecordsFragment extends Fragment {
                                         cr.setPaymentType(paymentType);
                                         cr.setOrderAmount(orderAmount);
                                         cr.setOrderTime(orderTime);
-                                        consumeRecordList.add(cr);
+                                        records.add(cr);
                                     }
+
+                                    //Adapter
+                                    recordsAdapter = new ConsumeRecordAdapter(records);
+                                    recordsRecyclerView.setAdapter(recordsAdapter);
 
                                 } else {
                                 }
@@ -163,26 +202,5 @@ public class ConsumeRecordsFragment extends Fragment {
                 Log.i("CONSUME RESP", responseBody);
             }
         });
-
-//        ConsumeRecord cr1 = new ConsumeRecord("20220513493435433433333", "宝码（临时额度）", "￥18.00", "2022-08-31 11:04:00", "");
-//        consumeRecordList.add(cr1);
-//
-//        ConsumeRecord cr2 = new ConsumeRecord("20220513493435433433301", "支付宝", "￥28.00", "2022-08-31 12:04:00", "");
-//        consumeRecordList.add(cr2);
-//
-//        ConsumeRecord cr3 = new ConsumeRecord("20220513493435433433302", "宝码", "￥18.00", "2022-08-31 13:04:00", "");
-//        consumeRecordList.add(cr3);
-//
-//        ConsumeRecord cr4 = new ConsumeRecord("20220513493435433433303", "微信", "￥18.00", "2022-08-31 14:04:00", "");
-//        consumeRecordList.add(cr4);
-//
-//        ConsumeRecord cr5 = new ConsumeRecord("20220513493435433433304", "宝码（临时额度）", "￥18.00", "2022-08-31 15:04:00", "退款中");
-//        consumeRecordList.add(cr5);
-//
-//        ConsumeRecord cr6 = new ConsumeRecord("20220513493435433433305", "宝码（临时额度）", "￥18.00", "2022-08-31 16:04:00", "已退款");
-//        consumeRecordList.add(cr6);
-//
-//        ConsumeRecord cr7 = new ConsumeRecord("20220513493435433433306", "宝码（临时额度）", "￥18.00", "2022-08-31 17:04:00", "");
-//        consumeRecordList.add(cr7);
     }
 }

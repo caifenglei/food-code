@@ -1,5 +1,7 @@
 package com.example.foodcode.data.model;
 
+import android.util.Log;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -72,7 +74,7 @@ public class ConsumeRecord {
     }
 
     public void setOrderAmount(Double amount) {
-        orderAmount = new BigDecimal(amount).setScale(2, RoundingMode.CEILING);
+        orderAmount = new BigDecimal(amount).setScale(2, RoundingMode.HALF_DOWN);
     }
 
     public BigDecimal getOrderAmount() {

@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.foodcode.data.model.ConsumeRecord;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +17,7 @@ import java.util.Map;
 public class ConsumeRecordAdapter extends RecyclerView.Adapter<ConsumeRecordAdapter.ViewHolder> {
 
     private Resources resources;
-    private List<ConsumeRecord> recordList = new ArrayList<>();
+    private final List<ConsumeRecord> recordList;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -108,7 +107,7 @@ public class ConsumeRecordAdapter extends RecyclerView.Adapter<ConsumeRecordAdap
         paymentTypes.put(ConsumeRecord.PAYMENT_TYPE_COMBINE, resources.getString(R.string.pay_type_combine));
 
         int paymentMethod = cr.getPaymentMethod();
-        StringBuffer textSb = new StringBuffer();
+        StringBuilder textSb = new StringBuilder();
         textSb.append(paymentMethods.get(paymentMethod));
         if(paymentMethod == ConsumeRecord.PAYMENT_METHOD_BAOMA || paymentMethod == ConsumeRecord.PAYMENT_METHOD_VISIT || paymentMethod == ConsumeRecord.PAYMENT_METHOD_PARTNER){
             textSb.append(resources.getString(R.string.left_bracket));
