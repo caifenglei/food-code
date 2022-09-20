@@ -29,6 +29,7 @@ import android.widget.TextView;
 
 import com.example.foodcode.data.PaymentResult;
 import com.example.foodcode.data.PaymentViewModel;
+import com.example.foodcode.data.model.ConsumeRecord;
 import com.example.foodcode.sunmi.ScanCode;
 import com.example.foodcode.sunmi.Sound;
 import com.example.foodcode.utils.BitmapTransformUtils;
@@ -201,7 +202,14 @@ public class CalculatorFragment extends Fragment implements SurfaceHolder.Callba
                 if(paymentResult.getError() != null){
                     waitingPayDialog.receiveMoneyFail(paymentResult.getError());
                 }else{
-                    //refresh list
+                    //refresh consume list
+                    Bundle consume = new Bundle();
+                    ConsumeRecord consumeRecord = new ConsumeRecord();
+                    consumeRecord.setOrderAmount(Double.parseDouble("0.03"));
+                    consume.putSerializable("record", consumeRecord);
+                    Log.i("SET-RESULT", String.valueOf(consumeRecord.getOrderAmount()));
+                    getParentFragmentManager().setFragmentResult("moneyPaid", consume);
+
                     waitingPayDialog.receiveMoneySuccess();
                 }
             }

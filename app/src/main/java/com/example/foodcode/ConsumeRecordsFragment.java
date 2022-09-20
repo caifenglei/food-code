@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -47,15 +48,24 @@ public class ConsumeRecordsFragment extends Fragment {
 
     private List<ConsumeRecord> consumeRecordList = new ArrayList<>();
     private RecyclerView recordsRecyclerView;
-    private RecyclerView.LayoutManager recordsLayoutManager;
+    private LinearLayoutManager recordsLayoutManager;
     private ConsumeRecordAdapter recordsAdapter;
-
     private SwipeRefreshLayout swipeRefreshLayout;
 
     private Context context;
     private AuthManager authManager;
 
-    private final int FIRST_PAGE = 1;
+    private int pageIndex = 1;
+    // 可见的item数
+    private int visibleItemCount;
+    // 第一个可见的item index
+    private int firstVisibleItem;
+    // 已加载的总item数
+    private int totalRenderItemCount;
+    // 数据库中的总数
+    private int totalItemCount;
+    private boolean loadingMore = false;
+    private boolean itemAllLoaded = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,11 +74,17 @@ public class ConsumeRecordsFragment extends Fragment {
         context = getActivity().getApplicationContext();
         authManager = new AuthManager(context);
 
-//        if (getArguments() != null) {
-            // Initialize dataset, this data would usually come from a local content provider or
-            // remote server.
-//            initRecords();
-//        }
+        getParentFragmentManager().setFragmentResultListener("moneyPaid", this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
+                ConsumeRecord consumeRecord = (ConsumeRecord) bundle.getSerializable("record");
+                Log.i("ON-LISTENER", String.valueOf(consumeRecord.getOrderAmount()));
+                consumeRecordList.add(0, consumeRecord);
+                totalItemCount++;
+                recordsAdapter.notifyItemInserted(0);
+                recordsRecyclerView.scrollToPosition(0);
+            }
+        });
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -117,27 +133,43 @@ public class ConsumeRecordsFragment extends Fragment {
             }
         });
 
-        recordsRecyclerView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+        // Swipe pull up (load more)
+        recordsRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrollChange(View view, int i, int i1, int i2, int i3) {
-                // TODO
-                Log.i("OnScroll", String.valueOf(i) + "," +  String.valueOf(i1) + "," +  String.valueOf(i2) + "," +  String.valueOf(i3));
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                visibleItemCount = recyclerView.getChildCount();
+                totalRenderItemCount = recordsLayoutManager.getItemCount();
+                firstVisibleItem = recordsLayoutManager.findFirstVisibleItemPosition();
+
+                //TODO
+                if(!loadingMore){
+                    if(firstVisibleItem + visibleItemCount >= totalRenderItemCount){
+                       pageIndex++;
+                       loadingMore = true;
+                       fetchRecords();
+                    }
+                }
+
+                Log.i("COUNT",  "First:" + String.valueOf(firstVisibleItem) + ", Visible:" + String.valueOf(visibleItemCount) + ", Total:" + String.valueOf(totalItemCount));
             }
         });
 
-        fetchRecords(FIRST_PAGE);
+        fetchRecords();
 
         return rootView;
     }
 
     private void refreshRecords(){
-        fetchRecords(FIRST_PAGE);
+//        consumeRecordList.clear();
+        pageIndex = 1;
+        fetchRecords();
     }
 
-    private void fetchRecords(int pageNum) {
+    private void fetchRecords() {
 
         Map<String, Object> params = new HashMap<>();
-        params.put("pageNo", pageNum);
+        params.put("pageNo", pageIndex);
         params.put("pageSize", 10);
         params.put("deviceCode", authManager.getDeviceCode());
         Log.i("START HTTP", "Order List");
@@ -162,8 +194,11 @@ public class ConsumeRecordsFragment extends Fragment {
                                 if (msgCode.equals("100")) {
                                     JSONObject responseData = responseJson.getJSONObject("responseData");
                                     JSONArray consumeList = responseData.getJSONArray("list");
-                                    List<ConsumeRecord> records = new ArrayList<>();
-                                    for(int i = 0; i < consumeList.length(); i++){
+                                    if(pageIndex == 1){
+                                        consumeRecordList.clear();
+                                    }
+                                    int currentSize = consumeList.length();
+                                    for(int i = 0; i < currentSize; i++){
                                         JSONObject record = consumeList.getJSONObject(i);
                                         String orderId = record.getString("id");
                                         String orderNo = record.getString("expendOrderNum");
@@ -180,15 +215,19 @@ public class ConsumeRecordsFragment extends Fragment {
                                         cr.setPaymentType(paymentType);
                                         cr.setOrderAmount(orderAmount);
                                         cr.setOrderTime(orderTime);
-                                        records.add(cr);
+                                        consumeRecordList.add(cr);
                                     }
 
-                                    //Adapter
-                                    recordsAdapter = new ConsumeRecordAdapter(records);
-                                    recordsRecyclerView.setAdapter(recordsAdapter);
+                                    totalItemCount = responseData.getInt("totalRecords");
+                                    if(totalRenderItemCount >= totalItemCount){
+                                        itemAllLoaded = true;
+                                    }
 
-                                } else {
+                                    Log.i("RECORD SIZE", String.valueOf(currentSize) + "," + String.valueOf(consumeRecordList.size()));
+                                    recordsAdapter.notifyItemRangeChanged(consumeRecordList.size(), currentSize);
                                 }
+
+                                loadingMore = false;
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }

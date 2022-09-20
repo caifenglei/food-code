@@ -2,10 +2,11 @@ package com.example.foodcode.data.model;
 
 import android.util.Log;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-public class ConsumeRecord {
+public class ConsumeRecord implements Serializable {
 
     private String orderId;
     private String orderNo;
