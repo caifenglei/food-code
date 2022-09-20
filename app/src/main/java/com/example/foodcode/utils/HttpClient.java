@@ -40,6 +40,7 @@ public class HttpClient {
                 jsonObject.put(entry.getKey(), entry.getValue());
             }
 
+            Log.i("URL", BASE_URL + path);
             Log.i("PARAMS", jsonObject.toString());
 
             String reqSource = "android";

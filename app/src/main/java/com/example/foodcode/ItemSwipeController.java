@@ -14,6 +14,11 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.example.foodcode.data.model.ConsumeRecord;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 enum SwipeState {GONE, RIGHT_VISIBLE}
 
 public class ItemSwipeController extends ItemTouchHelper.Callback {
@@ -33,7 +38,30 @@ public class ItemSwipeController extends ItemTouchHelper.Callback {
     //tells helper what kind of actions RecyclerView should handle
     @Override
     public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-        return makeMovementFlags(0, LEFT);
+//
+        ConsumeRecordAdapter.ViewHolder adapterViewHolder = (ConsumeRecordAdapter.ViewHolder) viewHolder;
+        ConsumeRecord cr = adapterViewHolder.getDataRecord();
+        int status = cr.getOrderStatus();
+        int paymentType = cr.getPaymentType();
+        String orderTime = cr.getOrderTime();
+
+        //Disabled case
+        Log.i("STATUS_PAY", String.valueOf(status) + "," + String.valueOf(paymentType));
+        if(status == ConsumeRecord.STATUS_REFUNDING || status == ConsumeRecord.STATUS_REFUNDED
+                || paymentType == ConsumeRecord.PAYMENT_TYPE_TEMP || paymentType == ConsumeRecord.PAYMENT_TYPE_COMBINE
+            || !isInCurrentMonth(orderTime)){
+            return makeMovementFlags(0, 0);
+        }else{
+            return makeMovementFlags(0, LEFT);
+        }
+    }
+
+    private boolean isInCurrentMonth(String orderTime){
+        SimpleDateFormat monthFormat = new SimpleDateFormat("yyyy-MM");
+        String thisMonth = monthFormat.format(new Date());
+        String orderMonth = orderTime.substring(0, 7);
+        Log.i("DATE", thisMonth + "," + orderMonth);
+        return thisMonth.equals(orderMonth);
     }
 
     //what to do on given actions: move
@@ -87,6 +115,7 @@ public class ItemSwipeController extends ItemTouchHelper.Callback {
 
     @SuppressLint("ClickableViewAccessibility")
     private void setTouchListener(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+
         recyclerView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent event) {
@@ -129,6 +158,7 @@ public class ItemSwipeController extends ItemTouchHelper.Callback {
         recyclerView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     ItemSwipeController.super.onChildDraw(c, recyclerView, viewHolder, 0F, dY, actionState, isCurrentlyActive);
                     recyclerView.setOnTouchListener(new View.OnTouchListener() {
@@ -142,7 +172,10 @@ public class ItemSwipeController extends ItemTouchHelper.Callback {
 
                     if (buttonInstance != null && buttonInstance.contains(event.getX(), event.getY())) {
                         if (swipeShownState == SwipeState.RIGHT_VISIBLE) {
-                            swipeActions.onRefundClicked(viewHolder.getAdapterPosition());
+                            // 触发退款
+                            ConsumeRecordAdapter.ViewHolder adapterViewHolder = (ConsumeRecordAdapter.ViewHolder) viewHolder;
+                            ConsumeRecord cr = adapterViewHolder.getDataRecord();
+                            swipeActions.onRefundClicked(cr);
                         }
                     }
 

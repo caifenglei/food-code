@@ -109,12 +109,16 @@ public class ConsumeRecordsFragment extends Fragment {
         //Swipe left
         ItemSwipeController swipeController = new ItemSwipeController(new SwipeActions() {
             @Override
-            public void onRefundClicked(int position) {
-                Log.i("swipe clicked position:", String.valueOf(position));
+            public void onRefundClicked(ConsumeRecord record) {
                 DialogFragment refundConfirmDialog = new PasswordConfirmDialogFragment();
+                Bundle dialogBundle = new Bundle();
+                dialogBundle.putString("orderNo", record.getOrderNo());
+                dialogBundle.putString("orderAmount", String.valueOf(record.getOrderAmount()));
+                refundConfirmDialog.setArguments(dialogBundle);
                 refundConfirmDialog.show(getParentFragmentManager(), "refund_dialog");
             }
         });
+        // Draw refund button
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(swipeController);
         itemTouchHelper.attachToRecyclerView(recordsRecyclerView);
         recordsRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration(){
@@ -143,7 +147,7 @@ public class ConsumeRecordsFragment extends Fragment {
                 firstVisibleItem = recordsLayoutManager.findFirstVisibleItemPosition();
 
                 //TODO
-                if(!loadingMore){
+                if(!loadingMore && !itemAllLoaded){
                     if(firstVisibleItem + visibleItemCount >= totalRenderItemCount){
                        pageIndex++;
                        loadingMore = true;
@@ -161,7 +165,6 @@ public class ConsumeRecordsFragment extends Fragment {
     }
 
     private void refreshRecords(){
-//        consumeRecordList.clear();
         pageIndex = 1;
         fetchRecords();
     }
@@ -172,7 +175,6 @@ public class ConsumeRecordsFragment extends Fragment {
         params.put("pageNo", pageIndex);
         params.put("pageSize", 10);
         params.put("deviceCode", authManager.getDeviceCode());
-        Log.i("START HTTP", "Order List");
         new HttpClient(context).post("/app/merchant/order/list", params, new okhttp3.Callback() {
             @Override
             public void onFailure(@NonNull Call call, IOException e) {

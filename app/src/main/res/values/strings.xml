@@ -71,6 +71,8 @@
     <string name="order_status_normal">其它组合额度</string>
     <string name="order_status_refunding">退款中</string>
     <string name="order_status_refunded">已退款</string>
+    <string name="refund_confirm_title">您正在操作金额为%1$s的订单退款...</string>
+    <string name="refund_empty_password">请输入当前商户登录密码</string>
 
     <string name="codebar_scan">Scanning</string>
     <string name="album">album</string>

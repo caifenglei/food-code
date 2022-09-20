@@ -27,6 +27,7 @@ public class ConsumeRecordAdapter extends RecyclerView.Adapter<ConsumeRecordAdap
         private final TextView orderChannelTextView;
         private final TextView orderDatetimeTextView;
         private final TextView orderStatusTextView;
+        private ConsumeRecord dataRecord;
 
         public ViewHolder(View v) {
             super(v);
@@ -58,6 +59,14 @@ public class ConsumeRecordAdapter extends RecyclerView.Adapter<ConsumeRecordAdap
         public TextView getOrderStatusTextView(){
             return orderStatusTextView;
         }
+
+        public void setDataRecord(ConsumeRecord record){
+            dataRecord = record;
+        }
+
+        public ConsumeRecord getDataRecord(){
+            return dataRecord;
+        }
     }
 
     public ConsumeRecordAdapter(List<ConsumeRecord> records) {
@@ -79,6 +88,8 @@ public class ConsumeRecordAdapter extends RecyclerView.Adapter<ConsumeRecordAdap
         resources = viewHolder.itemView.getResources();
 
         ConsumeRecord cr = recordList.get(position);
+        viewHolder.setDataRecord(cr);
+
         viewHolder.getOrderNoTextView().setText(cr.getOrderNo());
         String amountText = resources.getString(R.string.prefix_rmb) + String.valueOf(cr.getOrderAmount());
         viewHolder.getOrderAmountTextView().setText(amountText);
