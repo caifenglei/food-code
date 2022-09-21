@@ -153,6 +153,7 @@ public class PasswordConfirmDialogFragment extends DialogFragment implements Vie
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                Log.i("RESPONSE", responseBody);
             }
         });
     }

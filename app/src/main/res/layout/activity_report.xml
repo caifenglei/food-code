@@ -83,14 +83,24 @@
             android:translationY="40dp" />
 
         <TextView
-            android:id="@+id/textView15"
+            android:id="@+id/totalOrders"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="6,666"
+            android:text="0"
             android:textColor="@color/default_dark"
             android:textSize="32sp"
             android:translationX="40dp"
             android:translationY="72dp" />
+
+        <TextView
+            android:id="@+id/totalOrders2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/unit_order"
+            android:textColor="@color/default_dark"
+            android:textSize="18sp"
+            android:translationX="160dp"
+            android:translationY="84dp" />
 
     </androidx.cardview.widget.CardView>
 
@@ -125,10 +135,20 @@
             android:translationY="40dp" />
 
         <TextView
-            android:id="@+id/textView12"
+            android:id="@+id/totalAmount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="￥8,888.88"
+            android:text="0"
+            android:textColor="@color/default_dark"
+            android:textSize="32sp"
+            android:translationX="72dp"
+            android:translationY="72dp" />
+
+        <TextView
+            android:id="@+id/totalAmount2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/unit_RMB"
             android:textColor="@color/default_dark"
             android:textSize="32sp"
             android:translationX="40dp"

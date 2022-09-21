@@ -1,18 +1,20 @@
 package com.example.foodcode;
 
+import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextClock;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.foodcode.data.AuthManager;
-import com.example.foodcode.databinding.FragmentStatusBarBinding;
+
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -20,8 +22,14 @@ import com.example.foodcode.databinding.FragmentStatusBarBinding;
  */
 public class StatusBarFragment extends Fragment {
 
-    private FragmentStatusBarBinding binding;
     private View rootView;
+
+    private ImageView logoTitleView;
+    private TextView navTitleView;
+    private TextView tenantNameView;
+    private TextView autoCashierView;
+    private ImageView viewChartView;
+    private ImageView logoutView;
 
     private AuthManager authManager;
 
@@ -36,34 +44,61 @@ public class StatusBarFragment extends Fragment {
 
         authManager = new AuthManager(getActivity().getApplicationContext());
 
-//        TextView textClock = getView().findViewById(R.id.textViewDatetime);
-//        textClock.setText("某集团某分支某摊点某窗口007");
-//        TextClock textClock = (TextClock) getView().findViewById(R.id.textViewTenantName);
-//        textClock.setTimeZone("America/Los_Angeles");
-//        textClock.setFormat24Hour("yyyy年MM月dd日 EEEE aa HH:mm:ss");
-
-//        String is24HourMode = String.format("is 24 hours mode enabled: %s", )
-
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_status_bar, container, false);
-        TextView tenantName = rootView.findViewById(R.id.textViewTenantName);
-//        tenantName.setText("某集团某分支某摊点某窗口007");
-        tenantName.setText(authManager.getTenantName());
+
+        initView(rootView);
+        initAction();
 
         return rootView;
-
-//        binding = FragmentStatusBarBinding.inflate(inflater, container, false);
-//        binding.textViewTenantName.setText("某集团某分支某摊点某窗口007");
-//        binding.textViewDatetime.setTimeZone("Asia/Beijing");
-//        binding.textViewDatetime.setTimeZone("America/Los_Angeles");
-//        binding.textViewDatetime.setFormat24Hour("yyyy年MM月dd日 EEEE aa HH:mm:ss");
-//        return binding.getRoot();
     }
 
-//    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-//        super.onViewCreated(view, savedInstanceState);
-//
-//        TextView tenantName = rootView.findViewById(R.id.textViewTenantName);
-//        tenantName.setText("某集团某分支某摊点某窗口007");
-//    }
+    private void initView(View view) {
+        logoTitleView = view.findViewById(R.id.logoTitle);
+        navTitleView = view.findViewById(R.id.navTodayReport);
+        autoCashierView = view.findViewById(R.id.autoCashierBtn);
+        viewChartView = view.findViewById(R.id.viewChartBtn);
+        logoutView = view.findViewById(R.id.logoutBtn);
+        tenantNameView = view.findViewById(R.id.textViewTenantName);
+
+        tenantNameView.setText(authManager.getTenantName());
+
+        Intent activityIntent = getActivity().getIntent();
+        String pageName = activityIntent.getStringExtra("pageName");
+        if (Objects.equals(pageName, "report")) {
+            navTitleView.setVisibility(View.VISIBLE);
+            logoTitleView.setVisibility(View.GONE);
+            autoCashierView.setVisibility(View.GONE);
+            viewChartView.setVisibility(View.GONE);
+        } else {
+            navTitleView.setVisibility(View.GONE);
+            logoTitleView.setVisibility(View.VISIBLE);
+            autoCashierView.setVisibility(View.VISIBLE);
+            viewChartView.setVisibility(View.VISIBLE);
+        }
+
+    }
+
+    private void initAction() {
+
+        viewChartView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent chartIntent = new Intent(getActivity(), ReportActivity.class);
+                chartIntent.putExtra("pageName", "report");
+                startActivity(chartIntent);
+            }
+        });
+
+        navTitleView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent chartIntent = new Intent(getActivity(), CashierActivity.class);
+                chartIntent.putExtra("pageName", "cashier");
+                startActivity(chartIntent);
+            }
+        });
+    }
 }

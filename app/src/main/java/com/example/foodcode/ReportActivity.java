@@ -1,11 +1,21 @@
 package com.example.foodcode;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.foodcode.custom.ChartBarMarkerView;
+import com.example.foodcode.data.AuthManager;
+import com.example.foodcode.utils.HttpClient;
 import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Description;
@@ -21,23 +31,57 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import okhttp3.Call;
+import okhttp3.Response;
 
 public class ReportActivity extends AppCompatActivity {
 
     private CombinedChart chart;
 
-    private int COLOR_BAOMA = Color.rgb(255, 201, 35);
-    private int COLOR_ALI = Color.rgb(56, 168, 255);
-    private int COLOR_WECHAT = Color.rgb(151, 218, 66);
-    private int COLOR_UNION = Color.rgb(30, 214, 192);
+    private final int COLOR_BAOMA = Color.rgb(255, 201, 35);
+    private final int COLOR_ALI = Color.rgb(56, 168, 255);
+    private final int COLOR_WECHAT = Color.rgb(151, 218, 66);
+    private final int COLOR_UNION = Color.rgb(30, 214, 192);
+
+    private Float[] baomaAmounts = new Float[12];
+    private Float[] aiPayAmounts = new Float[12];
+    private Float[] wechatAmounts = new Float[12];
+    private Float[] unionPayAmounts = new Float[12];
+
+    private int[] baomaOrderNums = new int[12];
+    private int[] aiPayOrderNums = new int[12];
+    private int[] wechatOrderNums = new int[12];
+    private int[] unionPayOrderNums = new int[12];
+
+    private TextView totalAmountText;
+    private TextView totalOrderText;
+
+    private Context context;
+    private AuthManager authManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report);
+
+        context = getApplicationContext();
+        authManager = new AuthManager(context);
+
+        totalAmountText = findViewById(R.id.totalAmount);
+        totalOrderText = findViewById(R.id.totalOrders);
 
         chart = findViewById(R.id.combinedChart);
         chart.setPinchZoom(false);
@@ -112,22 +156,125 @@ public class ReportActivity extends AppCompatActivity {
         Description description = chart.getDescription();
         description.setEnabled(false);
 
-        CombinedData combinedData = new CombinedData();
-        combinedData.setData(setBarChartData());
-        combinedData.setData(setLineChartData());
+        getChartData();
 
-        chart.setData(combinedData);
-        chart.invalidate();
+//        CombinedData combinedData = new CombinedData();
+//        combinedData.setData(setBarChartData());
+//        combinedData.setData(setLineChartData());
+//
+//        chart.setData(combinedData);
+//        chart.invalidate();
+    }
+
+    private void getChartData() {
+
+        SimpleDateFormat monthFormat = new SimpleDateFormat("yyyy-MM--dd");
+        String today = monthFormat.format(new Date());
+        Map<String, Object> params = new HashMap<>();
+        params.put("deviceCode", authManager.getDeviceCode());
+        params.put("date", "2022-09-20");
+//        params.put("date", today);
+        new HttpClient(context).post("app/merchant/order/statistics", params, new okhttp3.Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, IOException e) {
+                Log.e("RECEIVE", "Failure", e);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseBody = response.body().string();
+                try {
+                    final JSONObject responseJson = new JSONObject(responseBody);
+                    String msgCode = responseJson.getString("msgCode");
+                    String message = responseJson.getString("message");
+
+                    //switch to UI main thread
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (msgCode.equals("100")) {
+
+                                try {
+                                    JSONObject responseData = responseJson.getJSONObject("responseData");
+
+                                    Double tAmount = responseData.getDouble("totalAmount");
+                                    int tOrder = responseData.getInt("totalOrderNum");
+                                    totalAmountText.setText(String.valueOf(tAmount));
+                                    totalOrderText.setText(String.valueOf(tOrder));
+
+                                    baomaAmounts = parseJSONArrayToFloatArray(responseData.getJSONArray("baomaAmounts"));
+                                    aiPayAmounts = parseJSONArrayToFloatArray(responseData.getJSONArray("aiPayAmounts"));
+                                    wechatAmounts = parseJSONArrayToFloatArray(responseData.getJSONArray("wechatAmounts"));
+                                    unionPayAmounts = parseJSONArrayToFloatArray(responseData.getJSONArray("unionPayAmounts"));
+
+                                    baomaOrderNums = parseJSONArrayToIntegerArray(responseData.getJSONArray("baomaOrderNums"));
+                                    aiPayOrderNums = parseJSONArrayToIntegerArray(responseData.getJSONArray("aiPayOrderNums"));
+                                    wechatOrderNums = parseJSONArrayToIntegerArray(responseData.getJSONArray("wechatOrderNums"));
+                                    unionPayOrderNums = parseJSONArrayToIntegerArray(responseData.getJSONArray("unionPayOrderNums"));
+
+
+                                    CombinedData combinedData = new CombinedData();
+                                    combinedData.setData(setBarChartData());
+                                    combinedData.setData(setLineChartData());
+
+                                    chart.setData(combinedData);
+                                    chart.invalidate();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                            } else {
+                                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                            }
+//                            progressBar.setVisibility(View.GONE);
+                        }
+                    });
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Log.i("RESPONSE22", responseBody);
+            }
+        });
+    }
+
+    private Float[] parseJSONArrayToFloatArray(JSONArray jsonArray) {
+        Float[] fArray = new Float[12];
+        int size = jsonArray.length();
+        if (size == 0) {
+            fArray = new Float[]{0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f};
+        } else {
+            for (int i = 0; i < size; i++) {
+                Double d = jsonArray.optDouble(i);
+                String s = jsonArray.optString(i);
+                Log.i("OPT", String.valueOf(d) + "," + s);
+                fArray[i] = Float.parseFloat(s);
+            }
+        }
+        return fArray;
+    }
+
+    private int[] parseJSONArrayToIntegerArray(JSONArray jsonArray) {
+        int[] iArray = new int[12];
+        int size = jsonArray.length();
+        if (size == 0) {
+            iArray = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        } else {
+            for (int i = 0; i < size; i++) {
+                iArray[i] = jsonArray.optInt(i);
+            }
+        }
+        return iArray;
     }
 
     private BarData setBarChartData() {
         float groupSpace = 0.2f;
         float barSpace = 0f;
 
-        Float[] baomaAmounts = {0f, 0f, 0f, 402.5f, 12000.3f, 9800.0f, 890.3f, 201.3f, 0.0f, 1599.0f, 150.0f, 0.0f};
-        Float[] aiPayAmounts = {0.0f, 0.0f, 0.0f, 1200.5f, 100.3f, 0.0f, 90.3f, 421.3f, 0.0f, 2259.0f, 0.0f, 0.0f};
-        Float[] wechatAmounts = {0.0f, 0.0f, 0.0f, 542.5f, 10.3f, 1087.0f, 40.3f, 31.3f, 0.0f, 9.0f, 10.0f, 0.0f};
-        Float[] unionPayAmounts = {0.0f, 0.0f, 0.0f, 2.5f, 7770.3f, 910.0f, 20.3f, 1018.3f, 0.0f, 599.0f, 30.5f, 0.0f};
+//        Float[] baomaAmounts = {0f, 0f, 0f, 402.5f, 12000.3f, 9800.0f, 890.3f, 201.3f, 0.0f, 1599.0f, 150.0f, 0.0f};
+//        Float[] aiPayAmounts = {0.0f, 0.0f, 0.0f, 1200.5f, 100.3f, 0.0f, 90.3f, 421.3f, 0.0f, 2259.0f, 0.0f, 0.0f};
+//        Float[] wechatAmounts = {0.0f, 0.0f, 0.0f, 542.5f, 10.3f, 1087.0f, 40.3f, 31.3f, 0.0f, 9.0f, 10.0f, 0.0f};
+//        Float[] unionPayAmounts = {0.0f, 0.0f, 0.0f, 2.5f, 7770.3f, 910.0f, 20.3f, 1018.3f, 0.0f, 599.0f, 30.5f, 0.0f};
 
         //Draw bar
         List<BarEntry> entriesBaoma = new ArrayList<>();
@@ -166,10 +313,10 @@ public class ReportActivity extends AppCompatActivity {
     }
 
     private LineData setLineChartData() {
-        int[] baomaOrderNums = {0, 0, 2, 40, 680, 180, 0, 9, 50, 101, 10, 0};
-        int[] aiPayOrderNums = {0, 0, 2, 4, 80, 8, 0, 9, 5, 11, 5, 0};
-        int[] wechatOrderNums = {0, 0, 2, 14, 60, 32, 0, 9, 0, 1, 2, 0};
-        int[] unionPayOrderNums = {0, 0, 2, 22, 30, 10, 0, 9, 5, 7, 0, 0};
+//        int[] baomaOrderNums = {0, 0, 2, 40, 680, 180, 0, 9, 50, 101, 10, 0};
+//        int[] aiPayOrderNums = {0, 0, 2, 4, 80, 8, 0, 9, 5, 11, 5, 0};
+//        int[] wechatOrderNums = {0, 0, 2, 14, 60, 32, 0, 9, 0, 1, 2, 0};
+//        int[] unionPayOrderNums = {0, 0, 2, 22, 30, 10, 0, 9, 5, 7, 0, 0};
 
 
         ArrayList<Entry> entriesBaoma = new ArrayList<>();
