@@ -51,9 +51,11 @@
     <string name="calc_divide">÷</string>
     <string name="calc_point">·</string>
     <string name="calc_cashier">收银</string>
+    <string name="money_zero">0.00</string>
     <string name="del">del</string>
     <string name="waiting_customer_pay">等待客户付款...</string>
     <string name="receiving_customer_pay">已扫付款码，收款中...</string>
+    <string name="please_show_paycode">请出示付款码</string>
     <string name="button_text_cancel_cashier">取消收银</string>
     <string name="button_text_relaunch_cashier">重新收银</string>
     <string name="button_text_confirm">确定</string>
@@ -72,6 +74,7 @@
     <string name="order_status_refunding">退款中</string>
     <string name="order_status_refunded">已退款</string>
     <string name="refund_confirm_title">您正在操作金额为%1$s的订单退款...</string>
+    <string name="set_receive_money">请先输入收款金额</string>
     <string name="refund_empty_password">请输入当前商户登录密码</string>
     <string name="title_today_report">今日报表</string>
 

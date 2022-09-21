@@ -35,8 +35,6 @@ public class CashierWaitingDialogFragment extends AppCompatDialogFragment {
     public interface OnCompleteListener {
         void onCancel();
 
-        void onSuccess(int payMode);
-
         void onComplete(String payQrCode, String money);
     }
 

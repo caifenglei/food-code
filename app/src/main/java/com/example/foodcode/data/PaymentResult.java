@@ -6,7 +6,7 @@ import org.json.JSONObject;
 
 public class PaymentResult {
     @Nullable
-    private JSONObject success;
+    private JSONObject result;
     @Nullable
     private String error;
 
@@ -14,13 +14,13 @@ public class PaymentResult {
         this.error = error;
     }
 
-    PaymentResult(@Nullable JSONObject success) {
-        this.success = success;
+    PaymentResult(@Nullable JSONObject result) {
+        this.result = result;
     }
 
     @Nullable
     public JSONObject getSuccess() {
-        return success;
+        return result;
     }
 
     @Nullable

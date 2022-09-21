@@ -8,6 +8,8 @@ import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,8 +19,10 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -26,16 +30,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.foodcode.data.PaymentResult;
 import com.example.foodcode.data.PaymentViewModel;
 import com.example.foodcode.data.model.ConsumeRecord;
+import com.example.foodcode.present.TextDisplay;
 import com.example.foodcode.sunmi.ScanCode;
 import com.example.foodcode.sunmi.Sound;
 import com.example.foodcode.utils.BitmapTransformUtils;
+import com.example.foodcode.utils.ScreenManager;
 import com.sunmi.scan.Image;
 import com.sunmi.scan.Symbol;
 import com.sunmi.scan.SymbolSet;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
@@ -48,7 +58,7 @@ import java.util.Objects;
 /**
  * A calculator
  */
-public class CalculatorFragment extends Fragment implements SurfaceHolder.Callback {
+public class CalculatorFragment extends Fragment {
 
     private static final int START_SCAN = 0x0001;
     private static final String USB_DEVICE_ATTACHED = "android.hardware.usb.action.USB_DEVICE_ATTACHED";
@@ -56,13 +66,18 @@ public class CalculatorFragment extends Fragment implements SurfaceHolder.Callba
     private final int RESULT_LOAD_IMAGE = 44;
     private final int RESULT_OK = 1;
     private static ScanCode scanCode = null;
-    private AsyncDecode asyncDecode = null;
     private static Sound sound = null;
     private SurfaceView mSurfaceView;
     private SurfaceHolder mSurfaceHolder;
     private PaymentViewModel paymentViewModel;
 
     CashierWaitingDialogFragment waitingPayDialog;
+    private ScreenManager screenManager = ScreenManager.getInstance();
+    private TextDisplay miniScreenDisplay = null;
+
+    private Context context;
+    private Handler resourceHandler = new Handler();
+    SoundPool soundPool = new SoundPool(2, AudioManager.STREAM_MUSIC, 0);
 
 
     Double calResult = 0.00;
@@ -80,8 +95,7 @@ public class CalculatorFragment extends Fragment implements SurfaceHolder.Callba
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-
-
+        context = getActivity().getApplicationContext();
     }
 
     @Override
@@ -93,19 +107,14 @@ public class CalculatorFragment extends Fragment implements SurfaceHolder.Callba
         paymentViewModel = new PaymentViewModel(getActivity().getApplicationContext());
 
         //Code Scan
-        asyncDecode = new AsyncDecode();
         scanCode = new ScanCode();
-
-//        mSurfaceView = (SurfaceView) fragmentView.findViewById(R.id.preview);
-//        mSurfaceHolder = mSurfaceView.getHolder();
-//        mSurfaceView.setFocusable(true);
-//        mSurfaceHolder.addCallback(this);
 
         sound = new Sound(this.getActivity());
         sound.addSound(0, R.raw.beep);
 
         initView();
         initAction();
+        manageMiniScreen();
 
         //Calculator
         calResultView = fragmentView.findViewById(R.id.amountResult);
@@ -158,29 +167,11 @@ public class CalculatorFragment extends Fragment implements SurfaceHolder.Callba
         waitingPayDialog.setCompleteListener(new CashierWaitingDialogFragment.OnCompleteListener() {
             @Override
             public void onCancel() {
-//                if (menus.size() > 0) {
-//                    if (videoMenuDisplay != null) {
-//                        videoMenuDisplay.show();
-//                    }
-//                }
                 Log.i("COMPLETE", "cancelled");
+                miniScreenDisplay.hidePay();
             }
 
-            @Override
-            public void onSuccess(final int payMode) {
-                Log.i("COMPLETE", "success");
-//                playSound(payMode);
-//                myHandler.postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        paySuccessToPrinter(payMode);
-//                        payDialog.setPhoneNumber("");
-//
-//                    }
-//                }, 1000);
-            }
-
-            //complete QR scan
+            //扫码完成，发起收款请求
             @Override
             public void onComplete(String payQrCode, String money) {
                 Log.i("COMPLETE", "complete");
@@ -202,18 +193,35 @@ public class CalculatorFragment extends Fragment implements SurfaceHolder.Callba
                 if(paymentResult.getError() != null){
                     waitingPayDialog.receiveMoneyFail(paymentResult.getError());
                 }else{
+                    //已扫码，并收款成功
                     //refresh consume list
                     Bundle consume = new Bundle();
                     ConsumeRecord consumeRecord = new ConsumeRecord();
-                    consumeRecord.setOrderAmount(Double.parseDouble("0.03"));
-                    consume.putSerializable("record", consumeRecord);
-                    Log.i("SET-RESULT", String.valueOf(consumeRecord.getOrderAmount()));
-                    getParentFragmentManager().setFragmentResult("moneyPaid", consume);
+                    try {
+                        JSONObject receiveResult = paymentResult.getSuccess();
+                        consumeRecord.setOrderId(receiveResult.getString("id"));
+                        consumeRecord.setOrderNo(receiveResult.getString("expendOrderNum"));
+                        consumeRecord.setOrderAmount(Double.parseDouble(receiveResult.getString("amount")));
+                        consumeRecord.setOrderTime(receiveResult.getString("expendTime"));
+                        consumeRecord.setPaymentMethod(receiveResult.getInt("expendMethod"));
+                        consumeRecord.setPaymentType(receiveResult.getInt("quotaType"));
+                        consumeRecord.setOrderStatus(receiveResult.getInt("orderStatus"));
+                        consume.putSerializable("record", consumeRecord);
+                        getParentFragmentManager().setFragmentResult("moneyPaid", consume);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    //TODO add money
+                    playSound();
 
                     waitingPayDialog.receiveMoneySuccess();
                 }
             }
         });
+
+        soundPool.load(context, R.raw.audio, 1);// 1
     }
 
 
@@ -305,6 +313,7 @@ public class CalculatorFragment extends Fragment implements SurfaceHolder.Callba
         calResultView.setText("0.00");
     }
 
+    // 触发收银的动作
     private void tapCashier() {
         int factorCount = calElements.size();
         Double moneyToPay = 0.00;
@@ -321,36 +330,14 @@ public class CalculatorFragment extends Fragment implements SurfaceHolder.Callba
             Log.i("cashier", String.valueOf(moneyToPay));
 
             Bundle bundle = new Bundle();
-            bundle.putString("money", String.valueOf(moneyToPay));
+            String money = String.valueOf(moneyToPay);
+            bundle.putString("money", money);
             waitingPayDialog.setArguments(bundle);
             waitingPayDialog.show(getParentFragmentManager(), "refund_dialog");
 
-            //内部集成的扫码模块
-//            Intent intent = new Intent("com.summi.scan");
-//            intent.setPackage("com.sunmi.sunmiqrcodescanner");
-//            startActivityForResult(intent, START_SCAN);
-
-            //扫码底座接入
-//            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//            startActivityForResult(intent, RESULT_LOAD_IMAGE);
-
-//            Intent intent = new Intent(USB_DEVICE_ATTACHED, 1);
-//            Intent intent = new Intent(USB_DEVICE_ATTACHED);
-//            UsbDevice device = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-//            String deviceName = device.getDeviceName();
-//            Log.i("DEVICE", deviceName);
-//            UsbManager usbManager = (UsbManager) getActivity().getSystemService(Context.USB_SERVICE);
-//            HashMap<String, UsbDevice> deviceList = usbManager.getDeviceList();
-//            Iterator<UsbDevice> deviceIterator = deviceList.values().iterator();
-//            while(deviceIterator.hasNext()){
-//                UsbDevice device = deviceIterator.next();
-//                //your code
-//                Log.i("DEVICE", device.getDeviceName() + " - VID:" + device.getVendorId() + ", PID:" + device.getProductId());
-//            }
-
-
+            miniScreenDisplay.showPay(money);
         } else {
-            Log.i("cashier", "no Money to pay");
+            Toast.makeText(context, R.string.set_receive_money, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -393,176 +380,26 @@ public class CalculatorFragment extends Fragment implements SurfaceHolder.Callba
         return format;
     }
 
-
-    //摄像头集成模块回调
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, Intent data){
-//        super.onActivityResult(resultCode, resultCode, data);
-//        Log.i("SCAN_RESULT", String.valueOf(resultCode));
-//        if(resultCode == 1 && data != null){
-//            Bundle bundle = data.getExtras();
-//            ArrayList<HashMap<String, String>> result = (ArrayList<HashMap<String, String>>) bundle.getSerializable("data");
-//            Iterator<HashMap<String, String>> it = result.iterator();
-//            while (it.hasNext()) {
-//                HashMap<String, String> hashMap = it.next();
-//                Log.i("sunmi", (String) hashMap.get("TYPE"));//扫码类型
-//                Log.i("sunmi", (String) hashMap.get("VALUE"));//扫码结果
-//            }
+    private void manageMiniScreen(){
+        screenManager.init(context);
+//        Display[] displays = screenManager.getDisplays();
+//        Log.e("SCREEN", "屏幕数量" + displays.length);
+//        for (int i = 0; i < displays.length; i++) {
+//            Log.e("SCREEN", "屏幕" + displays[i]);
 //        }
-//    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && data != null) {
-
-            Uri selectedImage = data.getData();
-            ContentResolver cr = getActivity().getContentResolver();
-            Bitmap bitmap = null;
-
-            try {
-                bitmap = BitmapFactory.decodeStream(cr.openInputStream(selectedImage));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-
-            Image source = BitmapTransformUtils.getImageByBitmap(bitmap);
-            scanCode.close();
-            scanCode.open(previewCallback, mSurfaceHolder);
-            scanCode.setAutoFocus();
-
-            asyncDecode = new AsyncDecode();
-            asyncDecode.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, source);
+        Display display = screenManager.getPresentationDisplays();
+        if(display != null){
+            miniScreenDisplay = new TextDisplay(context, display);
+            miniScreenDisplay.show();
         }
     }
 
-
-    //=========scan related=========
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-
-        scanCode.setPreviewDisplay(mSurfaceHolder);
-    }
-
-    @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
-        if (scanCode.getPedestalStaus() == ScanCode.PEDEST_NONE) scanCode.autoFocus();
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
-
-    }
-
-    Camera.PreviewCallback previewCallback = new Camera.PreviewCallback() {
-
-        public void onPreviewFrame(byte[] data, Camera camera) {
-
-            if (asyncDecode.isStoped()) {
-                asyncDecode = new AsyncDecode();
-                asyncDecode.execute(scanCode.setData(camera, data));//调用异步执行解码
+    private void playSound() {
+        resourceHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                soundPool.play(1, 1, 1, 10, 0, 1);
             }
-        }
-    };
-
-    private class AsyncDecode extends AsyncTask<Image, Void, String> {
-
-        private boolean stoped = true;
-        private StringBuilder sb = new StringBuilder();
-
-        @Override
-        protected String doInBackground(Image... params) {
-
-            stoped = false;
-
-            try {
-                Log.i("---STATUS", String.valueOf(scanCode.getPedestalStaus()));
-//                if (scanCode.getPedestalStaus() == ScanCode.PEDEST_NONE) {
-//                    if (winDialog != null) {
-//                        if (winDialog.getDialogStatus(tradewaitviewname)) {
-//                            isCharge = false;
-//                            isPlaying = false;
-//                            manager.cancel(ID);
-//                        }
-//                    }
-//                }else {
-//                    if (winDialog != null) {
-//                        if (winDialog.getDialogStatus(tradewaitviewname)) {
-//                            if (!stopstate) {
-//                                manager.notify(ID, builder.build());
-//                            }
-//                        }
-//                    }
-//                }
-
-                Image data = params[0];//获取灰度数据
-                long startTimeMillis = System.currentTimeMillis();
-
-                int nsyms = scanCode.scanImage(data);
-
-                long endTimeMillis = System.currentTimeMillis();
-                long cost_time = endTimeMillis - startTimeMillis;
-
-                sb.append("");
-
-                if (nsyms > 0) {
-                    sb.append("耗时: " + String.valueOf(cost_time) + " ms \n");
-
-                    SymbolSet syms = scanCode.getResults();  //获取解码结果
-
-                    for (Symbol sym : syms) {
-                        sb.append("码制: " + sym.getSymbolName() + "\n");
-                        sb.append("内容: " + sym.getResult() + "\n");
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return sb.toString();
-
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-
-            super.onPostExecute(result);
-
-            if (result == null || result.equals("")) {
-                stoped = true;
-                return;
-            }
-
-//            tvInfo.setText(result);
-            Log.i("---onPostExecute", result);
-
-            //打印
-//            printtradeinfo();
-
-//            if (winDialog != null) {
-//                winDialog.Destroy();
-//                winDialog = null;
-//                waittradestate = true;
-//            }
-
-            scanCode.close();
-//            keyboardview.setVisibility(View.VISIBLE);
-//            tradescanview.setVisibility(View.GONE);
-//
-//            tradesuccessstate = true;
-//
-//            winDialog = WinDialog.newWinDialog(true, R.layout.tradesuccess);
-//            winDialog.show(getFragmentManager(), successviewname);
-
-            sound.playsound(R.raw.tradeseccuss);
-
-            stoped = true;
-        }
-
-        public boolean isStoped() {
-
-            return stoped;
-        }
+        }, 200);
     }
 }

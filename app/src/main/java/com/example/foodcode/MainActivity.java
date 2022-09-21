@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -26,7 +27,9 @@ import com.example.foodcode.login.LoginFormState;
 import com.example.foodcode.login.LoginResult;
 import com.example.foodcode.login.LoginViewModel;
 import com.example.foodcode.login.LoginViewModelFactory;
+import com.example.foodcode.present.TextDisplay;
 import com.example.foodcode.utils.Helper;
+import com.example.foodcode.utils.ScreenManager;
 
 import org.json.JSONException;
 
@@ -38,6 +41,9 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
 
     private AuthManager authManager;
+    private ScreenManager screenManager = ScreenManager.getInstance();
+
+    TextDisplay miniScreenDisplay = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,6 +153,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        manageMiniScreen();
 
 //        binding.loginButton.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -155,6 +162,20 @@ public class MainActivity extends AppCompatActivity {
 //                startActivity(cashierIntent);
 //            }
 //        });
+    }
+
+    private void manageMiniScreen(){
+        screenManager.init(this);
+//        Display[] displays = screenManager.getDisplays();
+//        Log.e("SCREEN", "屏幕数量" + displays.length);
+//        for (int i = 0; i < displays.length; i++) {
+//            Log.e("SCREEN", "屏幕" + displays[i]);
+//        }
+        Display display = screenManager.getPresentationDisplays();
+        if(display != null){
+            miniScreenDisplay = new TextDisplay(this, display);
+            miniScreenDisplay.show();
+        }
     }
 
     private void showLoginFailed(String errorString) {
