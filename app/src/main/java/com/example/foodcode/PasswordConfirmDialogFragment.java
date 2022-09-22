@@ -24,6 +24,7 @@ import androidx.fragment.app.DialogFragment;
 import com.example.foodcode.data.AuthManager;
 import com.example.foodcode.data.model.ConsumeRecord;
 import com.example.foodcode.utils.HttpClient;
+import com.example.foodcode.utils.ToastUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,8 +48,10 @@ public class PasswordConfirmDialogFragment extends DialogFragment implements Vie
     private EditText passwordEditText;
     private ProgressBar progressBar;
 
+    private ConsumeRecord record;
     private String refundOrderNo;
     private String refundOrderAmount;
+    private int adapterPosition;
 
     private Context context;
     private AuthManager authManager;
@@ -90,8 +93,10 @@ public class PasswordConfirmDialogFragment extends DialogFragment implements Vie
 
     private void initData() {
         Bundle bundle = getArguments();
+        record = (ConsumeRecord) bundle.getSerializable("consumeRecord");
         refundOrderNo = bundle.getString("orderNo");
         refundOrderAmount = bundle.getString("orderAmount");
+        adapterPosition = bundle.getInt("adapterPosition");
 
         refundTitle.setText(getString(R.string.refund_confirm_title, refundOrderAmount));
     }
@@ -140,9 +145,19 @@ public class PasswordConfirmDialogFragment extends DialogFragment implements Vie
                         public void run() {
                             if (msgCode.equals("100")) {
                                 // update consume record TODO
+                                try {
+                                    JSONObject responseData = responseJson.getJSONObject("responseData");
+                                    record.setOrderStatus(responseData.getInt("orderStatus"));
+                                    Bundle bundle = new Bundle();
+                                    bundle.putInt("position", adapterPosition);
+                                    bundle.putSerializable("consume", record);
+                                    getParentFragmentManager().setFragmentResult("consumeRefunded", bundle);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
                                 dismiss();
                             } else {
-                                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                                ToastUtil.show(context, message);
                             }
                             progressBar.setVisibility(View.GONE);
                             confirmButton.setClickable(true);

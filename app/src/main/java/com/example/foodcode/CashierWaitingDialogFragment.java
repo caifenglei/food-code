@@ -2,6 +2,8 @@ package com.example.foodcode;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -25,6 +27,8 @@ public class CashierWaitingDialogFragment extends AppCompatDialogFragment {
     private String moneyToPay;
     private StringBuilder sb = new StringBuilder();
     private Handler myHandler = new Handler(Looper.getMainLooper());
+    private Handler resourceHandler = new Handler();
+    SoundPool soundPool = new SoundPool(2, AudioManager.STREAM_MUSIC, 0);
 
     private Boolean waitReceiving = false;
 
@@ -141,6 +145,8 @@ public class CashierWaitingDialogFragment extends AppCompatDialogFragment {
     private void initData() {
         Bundle bundle = getArguments();
         moneyToPay = bundle.getString("money");
+
+//        soundPool.load(getContext(), R.raw.beep, 1);
     }
 
     //扫码支付
@@ -151,6 +157,7 @@ public class CashierWaitingDialogFragment extends AppCompatDialogFragment {
         Log.i("PAYCODE", payCode);
         Log.i("MONEY", moneyToPay);
 
+//        playScannedSound();
         cashierText.setText(R.string.receiving_customer_pay);
         cancelButton.setVisibility(View.GONE);
         if (completeListener != null) {
@@ -168,6 +175,15 @@ public class CashierWaitingDialogFragment extends AppCompatDialogFragment {
     public void receiveMoneySuccess() {
         waitReceiving = false;
         dismiss();
+    }
+
+    private void playScannedSound(){
+        resourceHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                soundPool.play(1, 1, 1, 10, 0, 1);
+            }
+        }, 200);
     }
 
     private void sendMessageToUser(final String msg) {

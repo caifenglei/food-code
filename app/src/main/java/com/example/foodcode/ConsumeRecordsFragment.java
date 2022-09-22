@@ -78,11 +78,22 @@ public class ConsumeRecordsFragment extends Fragment {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
                 ConsumeRecord consumeRecord = (ConsumeRecord) bundle.getSerializable("record");
-                Log.i("ON-LISTENER", String.valueOf(consumeRecord.getOrderAmount()));
+                Log.i("LISTEN-CASHIER", String.valueOf(consumeRecord.getOrderAmount()));
                 consumeRecordList.add(0, consumeRecord);
                 totalItemCount++;
                 recordsAdapter.notifyItemInserted(0);
                 recordsRecyclerView.scrollToPosition(0);
+            }
+        });
+
+        getParentFragmentManager().setFragmentResultListener("consumeRefunded", this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
+                ConsumeRecord consumeRecord = (ConsumeRecord) bundle.getSerializable("consume");
+                int adapterPosition = bundle.getInt("position");
+                Log.i("LISTEN-REFUND", String.valueOf(consumeRecord.getOrderAmount()));
+                consumeRecordList.set(adapterPosition, consumeRecord);
+                recordsAdapter.notifyItemChanged(adapterPosition);
             }
         });
     }
@@ -109,9 +120,11 @@ public class ConsumeRecordsFragment extends Fragment {
         //Swipe left
         ItemSwipeController swipeController = new ItemSwipeController(new SwipeActions() {
             @Override
-            public void onRefundClicked(ConsumeRecord record) {
+            public void onRefundClicked(ConsumeRecord record, int position) {
                 DialogFragment refundConfirmDialog = new PasswordConfirmDialogFragment();
                 Bundle dialogBundle = new Bundle();
+                dialogBundle.putSerializable("consumeRecord", record);
+                dialogBundle.putInt("adapterPosition", position);
                 dialogBundle.putString("orderNo", record.getOrderNo());
                 dialogBundle.putString("orderAmount", String.valueOf(record.getOrderAmount()));
                 refundConfirmDialog.setArguments(dialogBundle);

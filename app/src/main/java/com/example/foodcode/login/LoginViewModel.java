@@ -54,16 +54,6 @@ public class LoginViewModel extends ViewModel {
     }
 
     public void login(String username, String password) {
-        // can be launched in a separate asynchronous job
-//        Result<LoggedInUser> result = loginRepository.login(username, password);
-//
-//        if (result instanceof Result.Success) {
-//            LoggedInUser data = ((Result.Success<LoggedInUser>) result).getData();
-//            loginResult.setValue(new LoginResult(new LoggedInUserView(data.getDisplayName())));
-//        } else {
-//            loginResult.setValue(new LoginResult(R.string.login_failed));
-//        }
-
 
         // new try
         Map<String, Object> params = new HashMap<>();
@@ -90,11 +80,6 @@ public class LoginViewModel extends ViewModel {
 
                                 try {
                                     loginResult.setValue(new LoginResult(responseJson.getJSONObject("responseData")));
-
-//                                    Map<String,String> responseMap = Helper.jsonToMap(responseJson.getJSONObject("responseData"));
-//                                    authManager.setAuthToken(responseMap.get("token"));
-//                                    authManager.setTenantName(responseMap.get("deviceName"));
-
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -107,18 +92,6 @@ public class LoginViewModel extends ViewModel {
                             }
                         }
                     });
-
-//                    MainActivity.this.runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            if(msgCode == "1"){
-//
-//                            }else{
-//                                loginResult.setValue(new LoginResult(responseJson.getString("message")));
-//                            }
-//                        }
-//                    });
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

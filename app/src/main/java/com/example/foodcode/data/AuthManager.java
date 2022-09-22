@@ -15,6 +15,11 @@ public class AuthManager {
     private static final String KEY_AUTH_TOKEN = "accessAuthToken";
     private static final String KEY_TENANT_NAME = "tenantName";
     private static final String KEY_DEVICE_CODE = "deviceCode";
+    private static final String KEY_CASHIER_TYPE = "cashierType";
+    private static final String KEY_CASHIER_AMOUNT = "cashierAmount";
+
+    public static final String CASHIER_MANUAL = "1";
+    public static final String CASHIER_AUTO = "2";
 
 
     public AuthManager(Context context) {
@@ -48,5 +53,28 @@ public class AuthManager {
 
     public String getDeviceCode() {
         return sharedPreferences.getString(KEY_DEVICE_CODE, "");
+    }
+
+    public void setCashierType(String cashierType){
+        editor.putString(KEY_CASHIER_TYPE, cashierType);
+        editor.commit();
+    }
+
+    public String getCashierType(){
+        return sharedPreferences.getString(KEY_CASHIER_TYPE, "");
+    }
+
+    public void setCashierAmount(String cashierAmount){
+        editor.putString(KEY_CASHIER_AMOUNT, cashierAmount);
+        editor.commit();
+    }
+
+    public String getCashierAmount(){
+        return sharedPreferences.getString(KEY_CASHIER_AMOUNT, "");
+    }
+
+    public void clearAuth(){
+        editor.clear();
+        editor.commit();
     }
 }

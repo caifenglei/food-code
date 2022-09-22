@@ -157,13 +157,6 @@ public class ReportActivity extends AppCompatActivity {
         description.setEnabled(false);
 
         getChartData();
-
-//        CombinedData combinedData = new CombinedData();
-//        combinedData.setData(setBarChartData());
-//        combinedData.setData(setLineChartData());
-//
-//        chart.setData(combinedData);
-//        chart.invalidate();
     }
 
     private void getChartData() {
@@ -172,8 +165,8 @@ public class ReportActivity extends AppCompatActivity {
         String today = monthFormat.format(new Date());
         Map<String, Object> params = new HashMap<>();
         params.put("deviceCode", authManager.getDeviceCode());
-        params.put("date", "2022-09-20");
-//        params.put("date", today);
+//        params.put("date", "2022-09-20");
+        params.put("date", today);
         new HttpClient(context).post("app/merchant/order/statistics", params, new okhttp3.Callback() {
             @Override
             public void onFailure(@NonNull Call call, IOException e) {

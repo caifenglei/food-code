@@ -21,6 +21,11 @@
     <string name="login_failed">"Login failed"</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="please_enter_username">请输入账号</string>
+    <string name="please_enter_password">请输入密码</string>
+    <string name="confirm_logout_text">您想退出宝码数智商户系统码？</string>
+    <string name="button_text_cancel">取消</string>
+    <string name="button_text_confirm_logout">确定退出</string>
     <string name="prefix_rmb">￥</string>
     <string name="title_order">订单</string>
     <string name="title_basic_data">基础数据</string>

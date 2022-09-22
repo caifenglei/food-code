@@ -3,6 +3,7 @@ package com.example.foodcode;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -98,6 +99,14 @@ public class StatusBarFragment extends Fragment {
                 Intent chartIntent = new Intent(getActivity(), CashierActivity.class);
                 chartIntent.putExtra("pageName", "cashier");
                 startActivity(chartIntent);
+            }
+        });
+
+        logoutView.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                DialogFragment dialogFragment = new ConfirmLogoutDialogFragment();
+                dialogFragment.show(getActivity().getSupportFragmentManager(), "confirm_logout");
             }
         });
     }

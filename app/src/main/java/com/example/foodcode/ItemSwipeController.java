@@ -175,7 +175,7 @@ public class ItemSwipeController extends ItemTouchHelper.Callback {
                             // 触发退款
                             ConsumeRecordAdapter.ViewHolder adapterViewHolder = (ConsumeRecordAdapter.ViewHolder) viewHolder;
                             ConsumeRecord cr = adapterViewHolder.getDataRecord();
-                            swipeActions.onRefundClicked(cr);
+                            swipeActions.onRefundClicked(cr, viewHolder.getAdapterPosition());
                         }
                     }
 
