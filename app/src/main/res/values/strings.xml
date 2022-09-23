@@ -79,7 +79,7 @@
     <string name="order_status_refunding">退款中</string>
     <string name="order_status_refunded">已退款</string>
     <string name="refund_confirm_title">您正在操作金额为%1$s的订单退款...</string>
-    <string name="set_receive_money">请先输入收款金额</string>
+    <string name="set_receive_money">请先输入有效的收款金额</string>
     <string name="refund_empty_password">请输入当前商户登录密码</string>
     <string name="title_today_report">今日报表</string>
 

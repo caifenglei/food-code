@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.example.foodcode.custom.ChartBarMarkerView;
 import com.example.foodcode.data.AuthManager;
+import com.example.foodcode.utils.Helper;
 import com.example.foodcode.utils.HttpClient;
 import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -136,7 +137,7 @@ public class ReportActivity extends AppCompatActivity {
         });
         leftAxis.setDrawGridLines(false);
         leftAxis.setDrawAxisLine(false);
-        leftAxis.setSpaceTop(35f);
+        leftAxis.setSpaceTop(40f);
         leftAxis.setAxisMinimum(0f);
         leftAxis.setTextSize(12f);
         leftAxis.setTextColor(Color.rgb(189, 194, 201));
@@ -161,11 +162,10 @@ public class ReportActivity extends AppCompatActivity {
 
     private void getChartData() {
 
-        SimpleDateFormat monthFormat = new SimpleDateFormat("yyyy-MM--dd");
+        SimpleDateFormat monthFormat = new SimpleDateFormat("yyyy-MM-dd");
         String today = monthFormat.format(new Date());
         Map<String, Object> params = new HashMap<>();
         params.put("deviceCode", authManager.getDeviceCode());
-//        params.put("date", "2022-09-20");
         params.put("date", today);
         new HttpClient(context).post("app/merchant/order/statistics", params, new okhttp3.Callback() {
             @Override
@@ -192,7 +192,7 @@ public class ReportActivity extends AppCompatActivity {
 
                                     Double tAmount = responseData.getDouble("totalAmount");
                                     int tOrder = responseData.getInt("totalOrderNum");
-                                    totalAmountText.setText(String.valueOf(tAmount));
+                                    totalAmountText.setText(Helper.formatMoney(tAmount, true));
                                     totalOrderText.setText(String.valueOf(tOrder));
 
                                     baomaAmounts = parseJSONArrayToFloatArray(responseData.getJSONArray("baomaAmounts"));

@@ -29,7 +29,8 @@ public class ConsumeRecord implements Serializable {
 
     public static final int PAYMENT_TYPE_FIXED = 1;
     public static final int PAYMENT_TYPE_TEMP = 2;
-    public static final int PAYMENT_TYPE_COMBINE = 3;
+    public static final int PAYMENT_TYPE_OTHER = 3;
+    public static final int PAYMENT_TYPE_COMBINE = 4;
 
     public ConsumeRecord() {
     }

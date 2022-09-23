@@ -5,8 +5,10 @@ import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.Observer;
 
 import android.os.Handler;
@@ -25,6 +27,7 @@ import com.example.foodcode.data.PaymentViewModel;
 import com.example.foodcode.data.model.ConsumeRecord;
 import com.example.foodcode.present.TextDisplay;
 import com.example.foodcode.sunmi.Sound;
+import com.example.foodcode.utils.Helper;
 import com.example.foodcode.utils.ScreenManager;
 import com.example.foodcode.utils.ToastUtil;
 import com.yzy.voice.VoicePlay;
@@ -50,6 +53,7 @@ public class CalculatorFragment extends Fragment {
     private TextDisplay miniScreenDisplay = null;
 
     private Context context;
+    AuthManager authManager;
     private Handler resourceHandler = new Handler();
     SoundPool soundPool = new SoundPool(2, AudioManager.STREAM_MUSIC, 0);
 
@@ -71,6 +75,14 @@ public class CalculatorFragment extends Fragment {
 
         super.onCreate(savedInstanceState);
         context = getActivity().getApplicationContext();
+        authManager = new AuthManager(context);
+
+        getParentFragmentManager().setFragmentResultListener("startAutoCashier", this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
+                startAutoCashier();
+            }
+        });
     }
 
     @Override
@@ -85,12 +97,10 @@ public class CalculatorFragment extends Fragment {
 //        sound.addSound(0, R.raw.beep);
 
         initView();
+        initMiniScreen();
         initAction();
-        manageMiniScreen();
 
         //Calculator
-        calResultView = fragmentView.findViewById(R.id.amountResult);
-
         Button keyOne = fragmentView.findViewById(R.id.keyOne);
         Button keyTwo = fragmentView.findViewById(R.id.keyTwo);
         Button keyThree = fragmentView.findViewById(R.id.keyThree);
@@ -132,6 +142,7 @@ public class CalculatorFragment extends Fragment {
 
     private void initView(){
         waitingPayDialog = new CashierWaitingDialogFragment();
+        calResultView = fragmentView.findViewById(R.id.amountResult);
     }
 
     private void initAction(){
@@ -140,6 +151,7 @@ public class CalculatorFragment extends Fragment {
             @Override
             public void onCancel() {
                 Log.i("COMPLETE", "cancelled");
+                autoCashier = false;
                 miniScreenDisplay.hidePay();
             }
 
@@ -192,7 +204,7 @@ public class CalculatorFragment extends Fragment {
                     waitingPayDialog.receiveMoneySuccess();
 
                     if(autoCashier){
-                        startCashier();
+                        startAutoCashier();
                     }else{
                         tapClear();
                         calResultView.setText(R.string.money_zero);
@@ -210,15 +222,9 @@ public class CalculatorFragment extends Fragment {
     }
 
     private void manageCashierType(){
-        AuthManager authManager = new AuthManager(context);
         String cashierType = authManager.getCashierType();
         if(cashierType.equals(AuthManager.CASHIER_AUTO)){
-            String cashierAmount = authManager.getCashierAmount();
-            calResultView.setText(cashierAmount);
-            moneyToCashier = cashierAmount;
-            autoCashier = true;
-
-            startCashier();
+            startAutoCashier();
         }
     }
 
@@ -296,6 +302,8 @@ public class CalculatorFragment extends Fragment {
                     calElements.add(calResult);
                     activeOperator = opt;
                 }
+            }else{
+                activeOperator = opt;
             }
         } else {
             //2 factors, then calculate the result
@@ -320,9 +328,16 @@ public class CalculatorFragment extends Fragment {
         if (factorCount == 0 && !Objects.equals(numberStack, "") && Double.parseDouble(numberStack) != 0) {
             moneyToPay = Double.parseDouble(numberStack);
         } else if (factorCount == 1 && calResult > 0) {
-            moneyToPay = calResult;
+            if (!Objects.equals(numberStack, "")) {
+                calElements.add(Double.parseDouble(numberStack));
+                if (calculateResult(activeOperator)) {
+                    calElements.add(calResult);
+                    moneyToPay = calResult;
+                }
+            }else{
+                moneyToPay = calResult;
+            }
         } else if (factorCount == 2) {
-            Log.i("F2", "....");
             if (calculateResult(R.id.keyPlus)) {
                 moneyToPay = calResult;
             }
@@ -330,12 +345,22 @@ public class CalculatorFragment extends Fragment {
         if (moneyToPay > 0) {
             Log.i("CASHIER", String.valueOf(moneyToPay));
 
-            moneyToCashier = String.valueOf(moneyToPay);
+            moneyToCashier = Helper.formatMoney(moneyToPay, false);
             calResultView.setText(moneyToCashier);
             startCashier();
         } else {
             ToastUtil.show(context, context.getString(R.string.set_receive_money));
         }
+    }
+
+    public void startAutoCashier(){
+
+        autoCashier = true;
+        String cashierAmount = authManager.getCashierAmount();
+        moneyToCashier = Helper.formatMoney(Double.parseDouble(cashierAmount), false);
+        calResultView.setText(moneyToCashier);
+
+        startCashier();
     }
 
     private void startCashier(){
@@ -374,19 +399,13 @@ public class CalculatorFragment extends Fragment {
         return ok;
     }
 
-    private String formatResultValue(Double value) {
+    private void formatResultValue(Double value) {
         BigDecimal bd = new BigDecimal(value);
         calResult = bd.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue(); //四舍五入
-
-        DecimalFormat df = new DecimalFormat("0.00");
-        String format = df.format(value);
-        calResultView.setText(format);
-
-//        Log.i("FFF", String.valueOf(value) + "," + String.valueOf(bd) + "," + String.valueOf(calResult) + "|" + format);
-        return format;
+        calResultView.setText(Helper.formatMoney(value, false));
     }
 
-    private void manageMiniScreen(){
+    private void initMiniScreen(){
         screenManager.init(context);
 //        Display[] displays = screenManager.getDisplays();
 //        Log.e("SCREEN", "屏幕数量" + displays.length);

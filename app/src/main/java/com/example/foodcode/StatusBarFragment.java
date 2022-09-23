@@ -78,6 +78,9 @@ public class StatusBarFragment extends Fragment {
             viewChartView.setVisibility(View.VISIBLE);
         }
 
+        if(!authManager.getCashierType().equals(AuthManager.CASHIER_AUTO)){
+            autoCashierView.setVisibility(View.GONE);
+        }
     }
 
     private void initAction() {
@@ -107,6 +110,15 @@ public class StatusBarFragment extends Fragment {
             public void onClick(View view) {
                 DialogFragment dialogFragment = new ConfirmLogoutDialogFragment();
                 dialogFragment.show(getActivity().getSupportFragmentManager(), "confirm_logout");
+            }
+        });
+
+        autoCashierView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("auto", true);
+                getParentFragmentManager().setFragmentResult("startAutoCashier", bundle);
             }
         });
     }

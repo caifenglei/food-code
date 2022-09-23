@@ -72,11 +72,9 @@ public class TextDisplay extends BasePresentation {
         root.setOutlineProvider(new ViewOutlineProvider() {
             @Override
             public void getOutline(View view, Outline outline) {
-                outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), 15);
+                outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), 0);
             }
         });
-
-
     }
 
 
