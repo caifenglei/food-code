@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FoodCode</string>
+    <string name="app_name">宝码数智商户</string>
     <string name="api_domain">https://baomadev.cttq.com</string>
     <string name="title_activity_cashier">CashierActivity</string>
     <!-- Strings used for fragments for navigation -->

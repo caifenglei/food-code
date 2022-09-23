@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Display;
@@ -64,7 +65,10 @@ public class MainActivity extends AppCompatActivity {
         loginButton = binding.loginButton;
         loadingProgressBar = binding.progressBar;
 
+
+
         //Form Login Result Observe
+        Activity activity = this;
         loginViewModel.getLoginResult().observe(this, new Observer<LoginResult>() {
             @Override
             public void onChanged(@Nullable LoginResult loginResult) {
@@ -74,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
                 if (loginResult.getError() != null) {
                     loadingProgressBar.setVisibility(View.GONE);
                     loginButton.setClickable(true);
-                    ToastUtil.show(getApplicationContext(), loginResult.getError());
+                    ToastUtil.show(activity, loginResult.getError());
                 } else if (loginResult.getSuccess() != null) {
 
                     try {

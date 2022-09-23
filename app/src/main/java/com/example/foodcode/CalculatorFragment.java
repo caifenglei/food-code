@@ -1,5 +1,6 @@
 package com.example.foodcode;
 
+import android.app.Activity;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -52,6 +53,7 @@ public class CalculatorFragment extends Fragment {
     private ScreenManager screenManager = ScreenManager.getInstance();
     private TextDisplay miniScreenDisplay = null;
 
+    private Activity activity;
     private Context context;
     AuthManager authManager;
     private Handler resourceHandler = new Handler();
@@ -74,7 +76,8 @@ public class CalculatorFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        context = getActivity().getApplicationContext();
+        activity = getActivity();
+        context =activity.getApplicationContext();
         authManager = new AuthManager(context);
 
         getParentFragmentManager().setFragmentResultListener("startAutoCashier", this, new FragmentResultListener() {
@@ -175,7 +178,12 @@ public class CalculatorFragment extends Fragment {
                 }
 
                 if(paymentResult.getError() != null){
-                    waitingPayDialog.receiveMoneyFail(paymentResult.getError());
+                    String reason = paymentResult.getError();
+                    if(autoCashier){
+                        ToastUtil.show(activity, reason);
+                    }else{
+                        waitingPayDialog.receiveMoneyFail(paymentResult.getError());
+                    }
                 }else{
                     //已扫码，并收款成功
                     //refresh consume list
@@ -349,7 +357,7 @@ public class CalculatorFragment extends Fragment {
             calResultView.setText(moneyToCashier);
             startCashier();
         } else {
-            ToastUtil.show(context, context.getString(R.string.set_receive_money));
+            ToastUtil.show(activity, context.getString(R.string.set_receive_money));
         }
     }
 

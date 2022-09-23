@@ -18,6 +18,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.foodcode.utils.ToastUtil;
 
 /**
  * create an instance of this fragment.
@@ -157,33 +160,25 @@ public class CashierWaitingDialogFragment extends AppCompatDialogFragment {
         Log.i("PAYCODE", payCode);
         Log.i("MONEY", moneyToPay);
 
-//        playScannedSound();
-        cashierText.setText(R.string.receiving_customer_pay);
-        cancelButton.setVisibility(View.GONE);
+//        cashierText.setText(R.string.receiving_customer_pay);
+//        cancelButton.setVisibility(View.GONE);
         if (completeListener != null) {
             completeListener.onComplete(payCode, moneyToPay);
         }
     }
 
     public void receiveMoneyFail(String message) {
-        cashierText.setText(message);
-        waitReceiving = false;
         //manual
+        waitReceiving = false;
+
+        cashierText.setText(message);
+        cancelButton.setVisibility(View.GONE);
         confirmDialogButton.setVisibility(View.VISIBLE);
     }
 
     public void receiveMoneySuccess() {
         waitReceiving = false;
         dismiss();
-    }
-
-    private void playScannedSound(){
-        resourceHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                soundPool.play(1, 1, 1, 10, 0, 1);
-            }
-        }, 200);
     }
 
     private void sendMessageToUser(final String msg) {

@@ -1,5 +1,6 @@
 package com.example.foodcode;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -53,6 +54,7 @@ public class PasswordConfirmDialogFragment extends DialogFragment implements Vie
     private String refundOrderAmount;
     private int adapterPosition;
 
+    private Activity activity;
     private Context context;
     private AuthManager authManager;
 
@@ -70,7 +72,8 @@ public class PasswordConfirmDialogFragment extends DialogFragment implements Vie
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        context = getActivity().getApplicationContext();
+        activity = getActivity();
+        context = activity.getApplicationContext();
         authManager = new AuthManager(context);
 
         initView(view);
@@ -144,10 +147,10 @@ public class PasswordConfirmDialogFragment extends DialogFragment implements Vie
                         @Override
                         public void run() {
                             if (msgCode.equals("100")) {
-                                // update consume record TODO
                                 try {
                                     JSONObject responseData = responseJson.getJSONObject("responseData");
                                     record.setOrderStatus(responseData.getInt("orderStatus"));
+                                    //update consume record
                                     Bundle bundle = new Bundle();
                                     bundle.putInt("position", adapterPosition);
                                     bundle.putSerializable("consume", record);
@@ -157,7 +160,7 @@ public class PasswordConfirmDialogFragment extends DialogFragment implements Vie
                                 }
                                 dismiss();
                             } else {
-                                ToastUtil.show(context, message);
+                                ToastUtil.show(activity, message);
                             }
                             progressBar.setVisibility(View.GONE);
                             confirmButton.setClickable(true);
