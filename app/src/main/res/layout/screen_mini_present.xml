@@ -15,47 +15,37 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/bg_mini_screen" />
 
-    <ImageView
-        android:id="@+id/payBgImage"
-        android:layout_width="560dp"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/bg_prepare_scan" />
-
     <TextView
         android:id="@+id/payAmount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="116dp"
-        android:background="#ffeaaa"
-        android:paddingLeft="36dp"
+        android:layout_marginTop="100dp"
+        android:paddingLeft="8dp"
         android:paddingTop="20dp"
         android:paddingRight="36dp"
         android:paddingBottom="20dp"
-        android:text="0"
+        android:text="18.00"
         android:textColor="#000000"
-        android:textSize="64sp"
+        android:textSize="155sp"
         android:textStyle="bold"
         android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/payAmountUnit"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/showPayCodeTip"
+        android:id="@+id/payAmountUnit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="280dp"
-        android:text="@string/please_show_paycode"
+        android:layout_marginStart="176dp"
+        android:layout_marginTop="128dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
+        android:text="@string/unit_RMB"
         android:textColor="#000000"
-        android:textSize="42sp"
+        android:textSize="120sp"
         android:textStyle="bold"
         android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

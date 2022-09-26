@@ -368,6 +368,7 @@ public class CalculatorFragment extends Fragment {
         String cashierAmount = authManager.getCashierAmount();
         moneyToCashier = Helper.formatMoney(Double.parseDouble(cashierAmount), false);
         calResultView.setText(moneyToCashier);
+        numberStack = cashierAmount;
 
         startCashier();
     }

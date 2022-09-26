@@ -23,8 +23,8 @@ public class HttpClient {
 
     public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
 
-//    private static final String BASE_URL = "https://baomadev.cttq.com/";
-    private static final String BASE_URL = "https://baomaqas.cttq.com/";
+    private static final String BASE_URL = "https://baomadev.cttq.com/";
+//    private static final String BASE_URL = "https://baomaqas.cttq.com/";
 
     AuthManager authManager;
 
