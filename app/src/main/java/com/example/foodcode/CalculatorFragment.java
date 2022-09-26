@@ -202,6 +202,7 @@ public class CalculatorFragment extends Fragment {
                         getParentFragmentManager().setFragmentResult("moneyPaid", consume);
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        ToastUtil.show(activity, "收款成功-返回数据字段有误");
                     }
 
 

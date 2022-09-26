@@ -1,5 +1,6 @@
 package com.example.foodcode;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.os.Build;
@@ -26,6 +27,7 @@ import com.example.foodcode.data.AuthManager;
 import com.example.foodcode.data.PaymentResult;
 import com.example.foodcode.data.model.ConsumeRecord;
 import com.example.foodcode.utils.HttpClient;
+import com.example.foodcode.utils.ToastUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -52,6 +54,7 @@ public class ConsumeRecordsFragment extends Fragment {
     private ConsumeRecordAdapter recordsAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
 
+    private Activity activity;
     private Context context;
     private AuthManager authManager;
 
@@ -71,7 +74,8 @@ public class ConsumeRecordsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        context = getActivity().getApplicationContext();
+        activity = getActivity();
+        context = activity.getApplicationContext();
         authManager = new AuthManager(context);
 
         getParentFragmentManager().setFragmentResultListener("moneyPaid", this, new FragmentResultListener() {
@@ -192,6 +196,7 @@ public class ConsumeRecordsFragment extends Fragment {
             @Override
             public void onFailure(@NonNull Call call, IOException e) {
                 Log.e("RECEIVE", "Failure", e);
+                ToastUtil.show(activity, "获取收款列表失败");
             }
 
             @Override
@@ -245,12 +250,14 @@ public class ConsumeRecordsFragment extends Fragment {
                                 loadingMore = false;
                             } catch (JSONException e) {
                                 e.printStackTrace();
+                                ToastUtil.show(activity, "列表解析失败-返回数据错误1");
                             }
                         }
                     });
 
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    ToastUtil.show(activity, "列表解析失败-返回数据错误2");
                 }
 
                 Log.i("CONSUME RESP", responseBody);

@@ -117,6 +117,7 @@ public class ConsumeRecordAdapter extends RecyclerView.Adapter<ConsumeRecordAdap
         paymentTypes.put(ConsumeRecord.PAYMENT_TYPE_FIXED, resources.getString(R.string.pay_type_fixed));
         paymentTypes.put(ConsumeRecord.PAYMENT_TYPE_TEMP, resources.getString(R.string.pay_type_temp));
         paymentTypes.put(ConsumeRecord.PAYMENT_TYPE_COMBINE, resources.getString(R.string.pay_type_combine));
+        paymentTypes.put(ConsumeRecord.PAYMENT_TYPE_OTHER, resources.getString(R.string.pay_type_other));
 
         int paymentMethod = cr.getPaymentMethod();
         StringBuilder textSb = new StringBuilder();

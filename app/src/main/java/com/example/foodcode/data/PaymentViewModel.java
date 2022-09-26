@@ -71,12 +71,14 @@ public class PaymentViewModel {
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
+                                paymentResult.setValue(new PaymentResult("收款错误-返回数据错误1"));
                             }
                         }
                     });
 
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    paymentResult.setValue(new PaymentResult("收款错误-返回数据错误2"));
                 }
 
                 Log.i("PAYMENT RESP", responseBody);

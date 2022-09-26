@@ -157,6 +157,7 @@ public class PasswordConfirmDialogFragment extends DialogFragment implements Vie
                                     getParentFragmentManager().setFragmentResult("consumeRefunded", bundle);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
+                                    ToastUtil.show(activity, "退款确认错误-返回数据错误1");
                                 }
                                 dismiss();
                             } else {
@@ -170,6 +171,7 @@ public class PasswordConfirmDialogFragment extends DialogFragment implements Vie
 
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    ToastUtil.show(activity, "退款确认错误-返回数据错误2");
                 }
                 Log.i("RESPONSE", responseBody);
             }

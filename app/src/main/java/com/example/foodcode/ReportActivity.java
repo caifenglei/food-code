@@ -17,6 +17,7 @@ import com.example.foodcode.custom.ChartBarMarkerView;
 import com.example.foodcode.data.AuthManager;
 import com.example.foodcode.utils.Helper;
 import com.example.foodcode.utils.HttpClient;
+import com.example.foodcode.utils.ToastUtil;
 import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Description;
@@ -70,6 +71,7 @@ public class ReportActivity extends AppCompatActivity {
     private TextView totalAmountText;
     private TextView totalOrderText;
 
+    private Activity activity;
     private Context context;
     private AuthManager authManager;
 
@@ -78,6 +80,7 @@ public class ReportActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report);
 
+        activity = this;
         context = getApplicationContext();
         authManager = new AuthManager(context);
 
@@ -98,12 +101,13 @@ public class ReportActivity extends AppCompatActivity {
         l.setXOffset(60f);
         l.setYEntrySpace(1f);
         l.setXEntrySpace(16f);
-        l.setTextSize(16f);
+        l.setTextSize(12f);
 
         //xAxis
         XAxis xAxis = chart.getXAxis();
         xAxis.setCenterAxisLabels(true);
-        xAxis.setDrawGridLines(true);
+//        xAxis.setDrawGridLines(true);
+        xAxis.setDrawGridLines(false);
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setDrawLabels(true);
         xAxis.setValueFormatter(new ValueFormatter() {
@@ -214,10 +218,11 @@ public class ReportActivity extends AppCompatActivity {
                                     chart.invalidate();
                                 } catch (JSONException e) {
                                     e.printStackTrace();
+                                    ToastUtil.show(activity, "获取报表数据失败 - 返回数据错误1");
                                 }
 
                             } else {
-                                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                                ToastUtil.show(activity, message);
                             }
 //                            progressBar.setVisibility(View.GONE);
                         }
@@ -225,6 +230,7 @@ public class ReportActivity extends AppCompatActivity {
 
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    ToastUtil.show(activity, "获取报表数据失败 - 返回数据错误2");
                 }
                 Log.i("RESPONSE22", responseBody);
             }

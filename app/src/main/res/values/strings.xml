@@ -74,7 +74,8 @@
     <string name="right_bracket">）</string>
     <string name="pay_type_fixed">固定额度</string>
     <string name="pay_type_temp">临时额度</string>
-    <string name="pay_type_combine">其它组合额度</string>
+    <string name="pay_type_combine">组合额度</string>
+    <string name="pay_type_other">其它</string>
     <string name="order_status_normal">其它组合额度</string>
     <string name="order_status_refunding">退款中</string>
     <string name="order_status_refunded">已退款</string>

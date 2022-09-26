@@ -82,18 +82,21 @@ public class LoginViewModel extends ViewModel {
                                     loginResult.setValue(new LoginResult(responseJson.getJSONObject("responseData")));
                                 } catch (JSONException e) {
                                     e.printStackTrace();
+                                    loginResult.setValue(new LoginResult("登录失败 - 返回数据错误1"));
                                 }
                             }else{
                                 try {
                                     loginResult.setValue(new LoginResult(responseJson.getString("message")));
                                 } catch (JSONException e) {
                                     e.printStackTrace();
+                                    loginResult.setValue(new LoginResult("登录失败 - 返回数据错误2"));
                                 }
                             }
                         }
                     });
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    loginResult.setValue(new LoginResult("登录失败 - 返回数据错误3"));
                 }
 
                 Log.i("LOGIN RESP", responseBody);
