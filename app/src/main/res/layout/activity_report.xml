@@ -45,7 +45,7 @@
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="30dp"
         android:letterSpacing="0.05"
         android:text="@string/title_chart"
         android:textColor="@color/default_dark"
@@ -57,7 +57,7 @@
         android:layout_width="338dp"
         android:layout_height="132dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="82dp"
+        android:layout_marginTop="72dp"
         app:cardCornerRadius="4dp"
         app:layout_constraintStart_toEndOf="@+id/cardView"
         app:layout_constraintTop_toBottomOf="@+id/fragmentContainerView">
@@ -109,7 +109,7 @@
         android:layout_width="338dp"
         android:layout_height="132dp"
         android:layout_marginStart="30dp"
-        android:layout_marginTop="82dp"
+        android:layout_marginTop="72dp"
         app:cardCornerRadius="4dp"
         app:layout_constraintStart_toStartOf="@+id/view5"
         app:layout_constraintTop_toBottomOf="@+id/fragmentContainerView">
@@ -176,15 +176,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/label_income_amount"
-        app:layout_constraintStart_toStartOf="@+id/combinedChart"
-        app:layout_constraintTop_toTopOf="@+id/combinedChart" />
+        app:layout_constraintBottom_toTopOf="@+id/combinedChart"
+        app:layout_constraintStart_toStartOf="@+id/combinedChart" />
 
     <TextView
         android:id="@+id/textView18"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/label_order_amount"
-        app:layout_constraintEnd_toEndOf="@+id/combinedChart"
-        app:layout_constraintTop_toTopOf="@+id/combinedChart" />
+        app:layout_constraintBottom_toTopOf="@+id/combinedChart"
+        app:layout_constraintEnd_toEndOf="@+id/combinedChart" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

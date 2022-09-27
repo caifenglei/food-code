@@ -89,7 +89,7 @@ public class ReportActivity extends AppCompatActivity {
         totalOrderText = findViewById(R.id.totalOrders);
 
         chart = findViewById(R.id.combinedChart);
-        chart.setPinchZoom(false);
+        chart.setPinchZoom(true);
         chart.setDrawGridBackground(false);
 
         //legend
