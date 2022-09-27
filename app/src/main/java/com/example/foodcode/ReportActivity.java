@@ -11,7 +11,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.foodcode.custom.ChartBarMarkerView;
 import com.example.foodcode.data.AuthManager;
@@ -22,6 +21,7 @@ import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.LegendEntry;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
@@ -32,6 +32,7 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.github.mikephil.charting.utils.ColorTemplate;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -101,7 +102,12 @@ public class ReportActivity extends AppCompatActivity {
         l.setXOffset(60f);
         l.setYEntrySpace(1f);
         l.setXEntrySpace(16f);
-        l.setTextSize(12f);
+        List<LegendEntry> les = new ArrayList<>();
+        les.add(new LegendEntry(getString(R.string.pay_channel_baoma), Legend.LegendForm.DEFAULT, 14f, Float.NaN, null, COLOR_BAOMA));
+        les.add(new LegendEntry(getString(R.string.pay_channel_ali), Legend.LegendForm.DEFAULT, 14f, Float.NaN, null, COLOR_ALI));
+        les.add(new LegendEntry(getString(R.string.pay_channel_wechat), Legend.LegendForm.DEFAULT, 14f, Float.NaN, null, COLOR_WECHAT));
+        les.add(new LegendEntry(getString(R.string.pay_channel_union), Legend.LegendForm.DEFAULT, 14f, Float.NaN, null, COLOR_UNION));
+        l.setCustom(les);
 
         //xAxis
         XAxis xAxis = chart.getXAxis();
@@ -113,11 +119,7 @@ public class ReportActivity extends AppCompatActivity {
         xAxis.setValueFormatter(new ValueFormatter() {
             @Override
             public String getAxisLabel(float value, AxisBase axis) {
-                String[] timeSegments = {"00:00-01:59", "02:00-03:59", "04:00-05:59", "06:00-07:59",
-                        "08:00-09:59", "10:00-11:59", "12:00-13:59", "14:00-15:59",
-                        "16:00-17:59", "18:00-19:59", "20:00-21:59", "22:00-23:59", "xx"};
-                int idx = (int) value;
-                return timeSegments[idx];
+                return getXAxisLabel(value);
             }
         });
         xAxis.setGranularity(1f);
@@ -150,7 +152,15 @@ public class ReportActivity extends AppCompatActivity {
 //        barChart.getAxisRight().setEnabled(false);
         YAxis rightAxis = chart.getAxisRight();
         rightAxis.setDrawGridLines(false);
+        rightAxis.setDrawAxisLine(false);
         rightAxis.setAxisMinimum(0f);
+        rightAxis.setSpaceMin(1f);
+        rightAxis.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getAxisLabel(float value, AxisBase axis) {
+                return value == 0f ? "" : String.valueOf((int) value);
+            }
+        });
 
         //marker view
         ChartBarMarkerView mv = new ChartBarMarkerView(this, R.layout.marker_chart_bar);
@@ -162,6 +172,14 @@ public class ReportActivity extends AppCompatActivity {
         description.setEnabled(false);
 
         getChartData();
+    }
+
+    public static String getXAxisLabel(float idx){
+        String[] timeSegments = {"00:00-01:59", "02:00-03:59", "04:00-05:59", "06:00-07:59",
+                "08:00-09:59", "10:00-11:59", "12:00-13:59", "14:00-15:59",
+                "16:00-17:59", "18:00-19:59", "20:00-21:59", "22:00-23:59", "x"};
+        int i = (int) idx;
+        return timeSegments[i];
     }
 
     private void getChartData() {
@@ -246,7 +264,6 @@ public class ReportActivity extends AppCompatActivity {
             for (int i = 0; i < size; i++) {
                 Double d = jsonArray.optDouble(i);
                 String s = jsonArray.optString(i);
-                Log.i("OPT", String.valueOf(d) + "," + s);
                 fArray[i] = Float.parseFloat(s);
             }
         }
@@ -323,10 +340,10 @@ public class ReportActivity extends AppCompatActivity {
         ArrayList<Entry> entriesWechat = new ArrayList<>();
         ArrayList<Entry> entriesUnionPay = new ArrayList<>();
         for (int i = 0; i < 12; i++) {
-            entriesBaoma.add(new Entry(i, baomaOrderNums[i]));
-            entriesAliPay.add(new Entry(i, aiPayOrderNums[i]));
-            entriesWechat.add(new Entry(i, wechatOrderNums[i]));
-            entriesUnionPay.add(new Entry(i, unionPayOrderNums[i]));
+            entriesBaoma.add(new Entry(i + 0.2f, baomaOrderNums[i]));
+            entriesAliPay.add(new Entry(i + 0.4f, aiPayOrderNums[i]));
+            entriesWechat.add(new Entry(i + 0.6f, wechatOrderNums[i]));
+            entriesUnionPay.add(new Entry(i + 0.8f, unionPayOrderNums[i]));
         }
 
         LineDataSet baomaSet = new LineDataSet(entriesBaoma, getString(R.string.pay_channel_baoma));

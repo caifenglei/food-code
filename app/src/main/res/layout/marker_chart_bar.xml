@@ -7,16 +7,29 @@
     tools:ignore="Overdraw">
 
     <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginRight="5dp"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@android:color/white"
+        android:textSize="12sp" />
+
+    <TextView
         android:id="@+id/tvContent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="5dp"
-        android:layout_marginTop="7dp"
+        android:layout_marginTop="12dp"
         android:layout_marginRight="5dp"
         android:ellipsize="end"
         android:singleLine="true"
-        android:text=""
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="@android:color/white"
         android:textSize="14sp" />

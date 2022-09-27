@@ -62,7 +62,8 @@ public class StatusBarFragment extends Fragment {
         logoutView = view.findViewById(R.id.logoutBtn);
         tenantNameView = view.findViewById(R.id.textViewTenantName);
 
-        tenantNameView.setText(authManager.getTenantName());
+        String tenantName = authManager.getTenantName()+getString(R.string.left_bracket) + authManager.getDeviceCode() + getString(R.string.right_bracket);
+        tenantNameView.setText(tenantName);
 
         Intent activityIntent = getActivity().getIntent();
         String pageName = activityIntent.getStringExtra("pageName");
