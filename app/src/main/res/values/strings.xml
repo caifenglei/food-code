@@ -68,7 +68,7 @@
     <string name="pay_channel_ali">支付宝</string>
     <string name="pay_channel_wechat">微信</string>
     <string name="pay_channel_union">银联</string>
-    <string name="pay_channel_visit">来访</string>
+    <string name="pay_channel_visit">访客</string>
     <string name="pay_channel_partner">常驻</string>
     <string name="left_bracket">（</string>
     <string name="right_bracket">）</string>
