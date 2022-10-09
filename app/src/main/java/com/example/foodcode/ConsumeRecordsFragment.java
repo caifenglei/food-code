@@ -192,7 +192,7 @@ public class ConsumeRecordsFragment extends Fragment {
         params.put("pageNo", pageIndex);
         params.put("pageSize", 10);
         params.put("deviceCode", authManager.getDeviceCode());
-        new HttpClient(context).post("/app/merchant/order/list", params, new okhttp3.Callback() {
+        new HttpClient(context).post("app/merchant/order/list", params, new okhttp3.Callback() {
             @Override
             public void onFailure(@NonNull Call call, IOException e) {
                 Log.e("RECEIVE", "Failure", e);

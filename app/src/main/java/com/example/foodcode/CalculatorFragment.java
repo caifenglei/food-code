@@ -20,24 +20,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.foodcode.data.AuthManager;
 import com.example.foodcode.data.PaymentResult;
 import com.example.foodcode.data.PaymentViewModel;
 import com.example.foodcode.data.model.ConsumeRecord;
 import com.example.foodcode.present.TextDisplay;
-import com.example.foodcode.sunmi.Sound;
 import com.example.foodcode.utils.Helper;
 import com.example.foodcode.utils.ScreenManager;
 import com.example.foodcode.utils.ToastUtil;
-import com.yzy.voice.VoicePlay;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -46,7 +42,7 @@ import java.util.Objects;
  */
 public class CalculatorFragment extends Fragment {
 
-//    private static Sound sound = null;
+    //    private static Sound sound = null;
     private PaymentViewModel paymentViewModel;
 
     CashierWaitingDialogFragment waitingPayDialog;
@@ -58,6 +54,9 @@ public class CalculatorFragment extends Fragment {
     AuthManager authManager;
     private Handler resourceHandler = new Handler();
     SoundPool soundPool = new SoundPool(2, AudioManager.STREAM_MUSIC, 0);
+    private int showPayCodeSound;
+    private int failReceiveSound;
+    private int successReceiveSound;
 
     Double calResult = 0.00;
     Boolean autoCashier = false;
@@ -77,7 +76,7 @@ public class CalculatorFragment extends Fragment {
 
         super.onCreate(savedInstanceState);
         activity = getActivity();
-        context =activity.getApplicationContext();
+        context = activity.getApplicationContext();
         authManager = new AuthManager(context);
 
         getParentFragmentManager().setFragmentResultListener("startAutoCashier", this, new FragmentResultListener() {
@@ -143,12 +142,12 @@ public class CalculatorFragment extends Fragment {
         return fragmentView;
     }
 
-    private void initView(){
+    private void initView() {
         waitingPayDialog = new CashierWaitingDialogFragment();
         calResultView = fragmentView.findViewById(R.id.amountResult);
     }
 
-    private void initAction(){
+    private void initAction() {
 
         waitingPayDialog.setCompleteListener(new CashierWaitingDialogFragment.OnCompleteListener() {
             @Override
@@ -173,18 +172,20 @@ public class CalculatorFragment extends Fragment {
             @Override
             public void onChanged(PaymentResult paymentResult) {
                 Log.i("OBSERVE", "payment result changed");
-                if(paymentResult == null){
+                if (paymentResult == null) {
                     return;
                 }
 
-                if(paymentResult.getError() != null){
+                if (paymentResult.getError() != null) {
                     String reason = paymentResult.getError();
-                    if(autoCashier){
+                    if (autoCashier) {
                         ToastUtil.show(activity, reason);
-                    }else{
+                    } else {
                         waitingPayDialog.receiveMoneyFail(paymentResult.getError());
                     }
-                }else{
+                    // 扫码收款失败，播放提示音
+                    playSound(failReceiveSound);
+                } else {
                     //已扫码，并收款成功
                     //refresh consume list
                     Bundle consume = new Bundle();
@@ -207,14 +208,14 @@ public class CalculatorFragment extends Fragment {
 
 
                     //TODO add money broadcast
-                    playSound();
+                    playSound(successReceiveSound);
 
                     miniScreenDisplay.hidePay();
                     waitingPayDialog.receiveMoneySuccess();
 
-                    if(autoCashier){
+                    if (autoCashier) {
                         startAutoCashier();
-                    }else{
+                    } else {
                         tapClear();
                         calResultView.setText(R.string.money_zero);
                         moneyToCashier = "0.00";
@@ -224,15 +225,21 @@ public class CalculatorFragment extends Fragment {
             }
         });
 
-        manageCashierType();
+        // 加载音频池
+        // 收款成功提示音
+        successReceiveSound = soundPool.load(context, R.raw.tradeseccuss, 2);
+        // 收款失败提示音
+        failReceiveSound = soundPool.load(context, R.raw.failed_to_pay_again, 1);
+        // 出示付款码提示音
+        showPayCodeSound = soundPool.load(context, R.raw.show_pay_code, 3);
 
-        //收款成功播放声音池
-        soundPool.load(context, R.raw.tradeseccuss, 1);// 1
+        //收款方式处理
+        manageCashierType();
     }
 
-    private void manageCashierType(){
+    private void manageCashierType() {
         String cashierType = authManager.getCashierType();
-        if(cashierType.equals(AuthManager.CASHIER_AUTO)){
+        if (cashierType.equals(AuthManager.CASHIER_AUTO)) {
             startAutoCashier();
         }
     }
@@ -311,7 +318,7 @@ public class CalculatorFragment extends Fragment {
                     calElements.add(calResult);
                     activeOperator = opt;
                 }
-            }else{
+            } else {
                 activeOperator = opt;
             }
         } else {
@@ -343,7 +350,7 @@ public class CalculatorFragment extends Fragment {
                     calElements.add(calResult);
                     moneyToPay = calResult;
                 }
-            }else{
+            } else {
                 moneyToPay = calResult;
             }
         } else if (factorCount == 2) {
@@ -362,7 +369,7 @@ public class CalculatorFragment extends Fragment {
         }
     }
 
-    public void startAutoCashier(){
+    public void startAutoCashier() {
 
         autoCashier = true;
         String cashierAmount = authManager.getCashierAmount();
@@ -373,13 +380,19 @@ public class CalculatorFragment extends Fragment {
         startCashier();
     }
 
-    private void startCashier(){
+    /**
+     * 弹出收款信息框，等待扫码收款
+     */
+    private void startCashier() {
         Bundle bundle = new Bundle();
         bundle.putString("money", moneyToCashier);
         waitingPayDialog.setArguments(bundle);
         waitingPayDialog.show(getParentFragmentManager(), "refund_dialog");
-
         miniScreenDisplay.showPay(moneyToCashier);
+
+        //播放请扫码的音频
+        Log.i("+++SOUND+++", String.valueOf(showPayCodeSound));
+        playSound(showPayCodeSound);
     }
 
     private boolean calculateResult(int opt) {
@@ -415,7 +428,7 @@ public class CalculatorFragment extends Fragment {
         calResultView.setText(Helper.formatMoney(value, false));
     }
 
-    private void initMiniScreen(){
+    private void initMiniScreen() {
         screenManager.init(context);
 //        Display[] displays = screenManager.getDisplays();
 //        Log.e("SCREEN", "屏幕数量" + displays.length);
@@ -423,21 +436,22 @@ public class CalculatorFragment extends Fragment {
 //            Log.e("SCREEN", "屏幕" + displays[i]);
 //        }
         Display display = screenManager.getPresentationDisplays();
-        if(display != null){
+        if (display != null) {
             miniScreenDisplay = new TextDisplay(context, display);
             miniScreenDisplay.show();
         }
     }
 
-    private void playSound() {
+    private void playSound(int soundId) {
 
 //        VoicePlay.with(context).play(moneyToCashier);
 
 //        soundPool.load(context, R.raw.tradeseccuss, 1);// 1
+
         resourceHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                soundPool.play(1, 1, 1, 10, 0, 1);
+                soundPool.play(soundId, 1, 1, 10, 0, 1);
             }
         }, 200);
     }

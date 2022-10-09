@@ -93,6 +93,8 @@ public class StatusBarFragment extends Fragment {
                 Intent chartIntent = new Intent(getActivity(), ReportActivity.class);
                 chartIntent.putExtra("pageName", "report");
                 startActivity(chartIntent);
+
+                getActivity().finish();
             }
         });
 

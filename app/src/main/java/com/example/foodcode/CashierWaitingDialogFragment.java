@@ -89,6 +89,7 @@ public class CashierWaitingDialogFragment extends AppCompatDialogFragment {
         getDialog().setOnKeyListener(new DialogInterface.OnKeyListener() {
             @Override
             public boolean onKey(DialogInterface dialogInterface, int i, KeyEvent event) {
+                Log.i("===TAG===", String.valueOf(event.getAction()));
                 if (!waitReceiving) {
                     return false;
                 }
