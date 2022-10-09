@@ -7,7 +7,7 @@
 
     <View
         android:id="@+id/view4"
-        android:layout_width="468dp"
+        android:layout_width="560dp"
         android:layout_height="300dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -20,7 +20,7 @@
         android:letterSpacing="0.1"
         android:text="@string/waiting_customer_pay"
         android:textColor="#262626"
-        android:textSize="30sp"
+        android:textSize="28sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/view4"
         app:layout_constraintStart_toStartOf="@+id/view4"
