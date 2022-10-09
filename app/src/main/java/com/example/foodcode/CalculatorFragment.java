@@ -29,6 +29,7 @@ import com.example.foodcode.present.TextDisplay;
 import com.example.foodcode.utils.Helper;
 import com.example.foodcode.utils.ScreenManager;
 import com.example.foodcode.utils.ToastUtil;
+import com.yzy.voice.VoicePlay;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -187,6 +188,13 @@ public class CalculatorFragment extends Fragment {
                     playSound(failReceiveSound);
                 } else {
                     //已扫码，并收款成功
+                    if (autoCashier) {
+                        // 由于报金额较慢，所以自动收款不含金额
+                        playSound(successReceiveSound);
+                    } else {
+                        playMoneySound(moneyToCashier);
+                    }
+
                     //refresh consume list
                     Bundle consume = new Bundle();
                     ConsumeRecord consumeRecord = new ConsumeRecord();
@@ -206,10 +214,6 @@ public class CalculatorFragment extends Fragment {
                         ToastUtil.show(activity, "收款成功-返回数据字段有误");
                     }
 
-
-                    //TODO add money broadcast
-                    playSound(successReceiveSound);
-
                     miniScreenDisplay.hidePay();
                     waitingPayDialog.receiveMoneySuccess();
 
@@ -228,6 +232,7 @@ public class CalculatorFragment extends Fragment {
         // 加载音频池
         // 收款成功提示音
         successReceiveSound = soundPool.load(context, R.raw.tradeseccuss, 2);
+
         // 收款失败提示音
         failReceiveSound = soundPool.load(context, R.raw.failed_to_pay_again, 1);
         // 出示付款码提示音
@@ -286,7 +291,7 @@ public class CalculatorFragment extends Fragment {
         if (Objects.equals(numberStack, "")) {
             numberStack = nbr;
         } else {
-            if (numberStack.length() < 6) {
+            if (numberStack.length() <= 6) {
                 numberStack = numberStack + nbr;
             }
         }
@@ -364,6 +369,9 @@ public class CalculatorFragment extends Fragment {
             moneyToCashier = Helper.formatMoney(moneyToPay, false);
             calResultView.setText(moneyToCashier);
             startCashier();
+
+//            playMoneySound("收款成功" + moneyToCashier + "元");
+
         } else {
             ToastUtil.show(activity, context.getString(R.string.set_receive_money));
         }
@@ -391,7 +399,7 @@ public class CalculatorFragment extends Fragment {
         miniScreenDisplay.showPay(moneyToCashier);
 
         //播放请扫码的音频
-        Log.i("+++SOUND+++", String.valueOf(showPayCodeSound));
+//        Log.i("+++SOUND+++", String.valueOf(showPayCodeSound));
         playSound(showPayCodeSound);
     }
 
@@ -442,17 +450,17 @@ public class CalculatorFragment extends Fragment {
         }
     }
 
+    private void playMoneySound(String money) {
+        VoicePlay.with(context).play("收款成功" + money + "元");
+    }
+
     private void playSound(int soundId) {
-
-//        VoicePlay.with(context).play(moneyToCashier);
-
-//        soundPool.load(context, R.raw.tradeseccuss, 1);// 1
 
         resourceHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 soundPool.play(soundId, 1, 1, 10, 0, 1);
             }
-        }, 200);
+        }, 500);
     }
 }
