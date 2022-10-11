@@ -104,7 +104,7 @@ public class CashierWaitingDialogFragment extends AppCompatDialogFragment {
                         }
 
                         final int len = sb.length();
-                        sendMessageToUser(sb.toString());
+//                        sendMessageToUser(sb.toString());
                         myHandler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -159,6 +159,10 @@ public class CashierWaitingDialogFragment extends AppCompatDialogFragment {
         if (completeListener != null) {
             completeListener.onComplete(payCode, moneyToPay);
         }
+    }
+
+    public void scanReceiveAgain() {
+        callingPayAfterReadingCode = false;
     }
 
     public void receiveMoneyFail(String message) {

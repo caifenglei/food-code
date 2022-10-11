@@ -2,7 +2,9 @@ package com.example.foodcode;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.os.Bundle;
 
@@ -34,6 +36,7 @@ import com.yzy.voice.VoicePlay;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -181,6 +184,7 @@ public class CalculatorFragment extends Fragment {
                     String reason = paymentResult.getError();
                     if (autoCashier) {
                         ToastUtil.show(activity, reason);
+                        waitingPayDialog.scanReceiveAgain();
                     } else {
                         waitingPayDialog.receiveMoneyFail(paymentResult.getError());
                     }
@@ -189,12 +193,6 @@ public class CalculatorFragment extends Fragment {
                 } else {
                     Log.i("===TRACE===", moneyToCashier);
                     //已扫码，并收款成功
-                    if (autoCashier) {
-                        // 由于报金额较慢，所以自动收款不含金额
-                        playSound(successReceiveSound);
-                    } else {
-                        playMoneySound(moneyToCashier);
-                    }
 
                     //refresh consume list
                     Bundle consume = new Bundle();
@@ -221,12 +219,12 @@ public class CalculatorFragment extends Fragment {
 
                     Log.i("===TRACE===", "reset money");
                     if (autoCashier) {
-                        startAutoCashier();
+                        // 由于报金额较慢，所以自动收款不含金额
+                        playAutoCashierPaidSound();
+//                        startAutoCashier();
                     } else {
+                        playMoneySound(moneyToCashier);
                         tapClear();
-                        calResultView.setText(R.string.money_zero);
-                        moneyToCashier = "0.00";
-                        calResult = 0.00;
                     }
                 }
             }
@@ -235,14 +233,22 @@ public class CalculatorFragment extends Fragment {
         // 加载音频池
         // 收款成功提示音
         successReceiveSound = soundPool.load(context, R.raw.tradeseccuss, 2);
-
         // 收款失败提示音
         failReceiveSound = soundPool.load(context, R.raw.failed_to_pay_again, 1);
         // 出示付款码提示音
         showPayCodeSound = soundPool.load(context, R.raw.show_pay_code, 3);
 
-        //收款方式处理
-        manageCashierType();
+        soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+
+            @Override
+            public void onLoadComplete(SoundPool soundPool, int i, int i1) {
+                Log.i("ON_SOUND_LOAD", String.valueOf(i) + "|" + String.valueOf(i1));
+                if(i == 3 && i1 == 0){
+                    //收款方式处理
+                    manageCashierType();
+                }
+            }
+        });
     }
 
     private void manageCashierType() {
@@ -372,9 +378,6 @@ public class CalculatorFragment extends Fragment {
             moneyToCashier = Helper.formatMoney(moneyToPay, false);
             calResultView.setText(moneyToCashier);
             startCashier();
-
-//            playMoneySound("收款成功" + moneyToCashier + "元");
-
         } else {
             ToastUtil.show(activity, context.getString(R.string.set_receive_money));
         }
@@ -462,8 +465,29 @@ public class CalculatorFragment extends Fragment {
         resourceHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
+                Log.i("PLAY===", String.valueOf(soundId));
                 soundPool.play(soundId, 1, 1, 10, 0, 1);
             }
         }, 500);
+    }
+
+    private void playAutoCashierPaidSound() {
+
+        MediaPlayer player = new MediaPlayer();
+        AssetFileDescriptor fileDescriptor = context.getResources().openRawResourceFd(R.raw.tradeseccuss);
+        try {
+            player.setDataSource(fileDescriptor.getFileDescriptor(), fileDescriptor.getStartOffset(), fileDescriptor.getLength());
+            fileDescriptor.close();
+            player.prepareAsync();
+            player.setOnPreparedListener((mediaPlayer) -> {
+                player.start();
+            });
+            player.setOnCompletionListener((mediaPlayer) -> {
+                player.reset();
+                startAutoCashier();
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
