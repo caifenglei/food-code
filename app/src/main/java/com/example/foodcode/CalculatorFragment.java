@@ -161,9 +161,9 @@ public class CalculatorFragment extends Fragment {
             //扫码完成，发起收款请求
             @Override
             public void onComplete(String payQrCode, String money) {
-                Log.i("COMPLETE", "complete");
+                Log.i("COMPLETE", "scan code complete");
 
-                //API to get money
+                //API to receive money
                 paymentViewModel.receiveMoney(payQrCode, money);
             }
         });
@@ -187,6 +187,7 @@ public class CalculatorFragment extends Fragment {
                     // 扫码收款失败，播放提示音
                     playSound(failReceiveSound);
                 } else {
+                    Log.i("===TRACE===", moneyToCashier);
                     //已扫码，并收款成功
                     if (autoCashier) {
                         // 由于报金额较慢，所以自动收款不含金额
@@ -214,9 +215,11 @@ public class CalculatorFragment extends Fragment {
                         ToastUtil.show(activity, "收款成功-返回数据字段有误");
                     }
 
+                    Log.i("===TRACE===", "close dialog");
                     miniScreenDisplay.hidePay();
                     waitingPayDialog.receiveMoneySuccess();
 
+                    Log.i("===TRACE===", "reset money");
                     if (autoCashier) {
                         startAutoCashier();
                     } else {

@@ -28,7 +28,8 @@ public class CashierWaitingDialogFragment extends AppCompatDialogFragment {
     private String moneyToPay;
     private StringBuilder sb = new StringBuilder();
     private Handler myHandler = new Handler(Looper.getMainLooper());
-    private Handler resourceHandler = new Handler();
+
+    private Boolean callingPayAfterReadingCode = false;
 
     private Boolean waitReceiving = false;
 
@@ -103,12 +104,13 @@ public class CashierWaitingDialogFragment extends AppCompatDialogFragment {
                         }
 
                         final int len = sb.length();
-//                        sendMessageToUser(sb.toString());
+                        sendMessageToUser(sb.toString());
                         myHandler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 if (len != sb.length()) return;
-                                if (sb.length() > 0) {
+                                //扫码读取数据结束且前一笔读码还未结束，发起收款，并清空码数据
+                                if (sb.length() > 0 && !callingPayAfterReadingCode) {
                                     payByCode(sb.toString());
                                     sb.setLength(0);
                                 }
@@ -150,8 +152,8 @@ public class CashierWaitingDialogFragment extends AppCompatDialogFragment {
     //扫码支付
     public void payByCode(String payCode) {
 
+        callingPayAfterReadingCode = true;
         payCode = payCode.replaceAll("\n", "");
-
 //        cashierText.setText(R.string.receiving_customer_pay);
 //        cancelButton.setVisibility(View.GONE);
         if (completeListener != null) {
@@ -162,6 +164,7 @@ public class CashierWaitingDialogFragment extends AppCompatDialogFragment {
     public void receiveMoneyFail(String message) {
         //manual
         waitReceiving = false;
+        callingPayAfterReadingCode = false;
 
         cashierText.setText(message);
         cancelButton.setVisibility(View.GONE);
@@ -170,6 +173,7 @@ public class CashierWaitingDialogFragment extends AppCompatDialogFragment {
 
     public void receiveMoneySuccess() {
         waitReceiving = false;
+        callingPayAfterReadingCode = false;
         dismiss();
     }
 
