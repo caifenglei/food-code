@@ -87,14 +87,21 @@ public class CashierWaitingDialogFragment extends AppCompatDialogFragment {
         getDialog().setOnKeyListener(new DialogInterface.OnKeyListener() {
             @Override
             public boolean onKey(DialogInterface dialogInterface, int i, KeyEvent event) {
-                if (!waitReceiving) {
+
+//                StringBuilder tsb = new StringBuilder();
+//                tsb.append((char) event.getUnicodeChar());
+//                Log.i("===ON_KEY===", String.valueOf(event.getUnicodeChar()) + ":" + tsb.toString());
+
+                //不在等待付款，或正在调用支付，不处理扫码输入
+                if (!waitReceiving || callingPayAfterReadingCode) {
+                    sb.setLength(0);
                     return false;
                 }
                 int action = event.getAction();
                 switch (action) {
                     case KeyEvent.ACTION_DOWN:
                         int unicodeChar = event.getUnicodeChar();
-//                        Log.i("CHAR", String.valueOf(unicodeChar));
+
                         if (unicodeChar != 0) {
                             sb.append((char) unicodeChar);
                         }
@@ -108,7 +115,11 @@ public class CashierWaitingDialogFragment extends AppCompatDialogFragment {
                         myHandler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
+
+                                // 200ms内字符长度有变化，说明还在读取字符
                                 if (len != sb.length()) return;
+
+                                // Log.i("DELAY===", sb.toString());
                                 //扫码读取数据结束且前一笔读码还未结束，发起收款，并清空码数据
                                 if (sb.length() > 0 && !callingPayAfterReadingCode) {
                                     payByCode(sb.toString());
@@ -127,12 +138,13 @@ public class CashierWaitingDialogFragment extends AppCompatDialogFragment {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                waitReceiving = false;
+                Log.i("CANCEL_BTN===", "called???" + view.toString());
+                    waitReceiving = false;
 //                CashierWaitingDialogFragment.this.getDialog().cancel();
-                if (completeListener != null) {
-                    completeListener.onCancel();
-                }
-                dismiss();
+                    if (completeListener != null) {
+                        completeListener.onCancel();
+                    }
+                    dismiss();
             }
         });
 
@@ -153,6 +165,8 @@ public class CashierWaitingDialogFragment extends AppCompatDialogFragment {
     public void payByCode(String payCode) {
 
         callingPayAfterReadingCode = true;
+        cancelButton.setClickable(false);
+
         payCode = payCode.replaceAll("\n", "");
 //        cashierText.setText(R.string.receiving_customer_pay);
 //        cancelButton.setVisibility(View.GONE);
@@ -162,12 +176,14 @@ public class CashierWaitingDialogFragment extends AppCompatDialogFragment {
     }
 
     public void scanReceiveAgain() {
+        cancelButton.setClickable(true);
         callingPayAfterReadingCode = false;
     }
 
     public void receiveMoneyFail(String message) {
         //manual
         waitReceiving = false;
+        cancelButton.setClickable(true);
         callingPayAfterReadingCode = false;
 
         cashierText.setText(message);
@@ -177,6 +193,7 @@ public class CashierWaitingDialogFragment extends AppCompatDialogFragment {
 
     public void receiveMoneySuccess() {
         waitReceiving = false;
+        cancelButton.setClickable(true);
         callingPayAfterReadingCode = false;
         dismiss();
     }

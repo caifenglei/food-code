@@ -156,7 +156,7 @@ public class CalculatorFragment extends Fragment {
         waitingPayDialog.setCompleteListener(new CashierWaitingDialogFragment.OnCompleteListener() {
             @Override
             public void onCancel() {
-                Log.i("COMPLETE", "cancelled");
+                Log.i("COMPLETE", "cancelled...");
                 autoCashier = false;
                 miniScreenDisplay.hidePay();
             }

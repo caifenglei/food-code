@@ -46,7 +46,7 @@ public class PaymentViewModel {
         params.put("qrCode", qrCode);
         params.put("amount", amount);
         params.put("terminalNum", authManager.getDeviceCode());
-        new HttpClient(context).post("/app/merchant/payment/pay", params, new okhttp3.Callback() {
+        new HttpClient(context).post("app/merchant/payment/pay", params, new okhttp3.Callback() {
             @Override
             public void onFailure(@NonNull Call call, IOException e) {
                 Log.e("RECEIVE", "Failure", e);
