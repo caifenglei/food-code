@@ -157,6 +157,9 @@ public class CalculatorFragment extends Fragment {
             @Override
             public void onCancel() {
                 Log.i("COMPLETE", "cancelled...");
+                if(autoCashier){
+                    numberStack = "";
+                }
                 autoCashier = false;
                 miniScreenDisplay.hidePay();
             }
@@ -304,6 +307,7 @@ public class CalculatorFragment extends Fragment {
                 numberStack = numberStack + nbr;
             }
         }
+        Log.i("calculator:", numberStack);
         formatResultValue(Double.parseDouble(numberStack));
     }
 
