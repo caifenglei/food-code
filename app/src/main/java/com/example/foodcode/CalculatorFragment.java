@@ -157,9 +157,9 @@ public class CalculatorFragment extends Fragment {
             @Override
             public void onCancel() {
                 Log.i("COMPLETE", "cancelled...");
-                if(autoCashier){
-                    numberStack = "";
-                }
+                //取消收银，则重置金额
+                tapClear();
+                
                 autoCashier = false;
                 miniScreenDisplay.hidePay();
             }
@@ -315,7 +315,8 @@ public class CalculatorFragment extends Fragment {
         if (Objects.equals(numberStack, "")) {
             numberStack = "0.";
         } else {
-            if (!numberStack.endsWith(".")) {
+            //避免多个小数输入导致错误
+            if(!numberStack.contains(".")){
                 numberStack = numberStack + '.';
             }
         }

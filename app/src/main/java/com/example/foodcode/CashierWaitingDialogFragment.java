@@ -151,6 +151,9 @@ public class CashierWaitingDialogFragment extends AppCompatDialogFragment {
         confirmDialogButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (completeListener != null) {
+                    completeListener.onCancel();
+                }
                 dismiss();
             }
         });
