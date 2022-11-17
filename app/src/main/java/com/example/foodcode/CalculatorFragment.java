@@ -403,15 +403,20 @@ public class CalculatorFragment extends Fragment {
      * 弹出收款信息框，等待扫码收款
      */
     private void startCashier() {
-        Bundle bundle = new Bundle();
-        bundle.putString("money", moneyToCashier);
-        waitingPayDialog.setArguments(bundle);
-        waitingPayDialog.show(getParentFragmentManager(), "refund_dialog");
-        miniScreenDisplay.showPay(moneyToCashier);
+        if(!waitingPayDialog.isAdded()) {
+            Bundle bundle = new Bundle();
+            bundle.putString("money", moneyToCashier);
+            waitingPayDialog.setArguments(bundle);
+            waitingPayDialog.show(getParentFragmentManager(), "refund_dialog");
+            miniScreenDisplay.showPay(moneyToCashier);
 
-        //播放请扫码的音频
+            //播放请扫码的音频
 //        Log.i("+++SOUND+++", String.valueOf(showPayCodeSound));
-        playSound(showPayCodeSound);
+            playSound(showPayCodeSound);
+        }else{
+            Log.i("NOT_ADDED", "发生了什么？");
+//            ToastUtil.show(activity, "操作太快，请重试");
+        }
     }
 
     private boolean calculateResult(int opt) {
@@ -443,7 +448,7 @@ public class CalculatorFragment extends Fragment {
 
     private void formatResultValue(Double value) {
         BigDecimal bd = new BigDecimal(value);
-        calResult = bd.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue(); //四舍五入
+        calResult = bd.setScale(2, BigDecimal.ROUND_DOWN).doubleValue(); //四舍五入
         calResultView.setText(Helper.formatMoney(value, false));
     }
 
