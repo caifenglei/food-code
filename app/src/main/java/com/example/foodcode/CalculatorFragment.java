@@ -38,6 +38,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -159,7 +160,7 @@ public class CalculatorFragment extends Fragment {
                 Log.i("COMPLETE", "cancelled...");
                 //取消收银，则重置金额
                 tapClear();
-                
+
                 autoCashier = false;
                 miniScreenDisplay.hidePay();
             }
@@ -246,7 +247,7 @@ public class CalculatorFragment extends Fragment {
             @Override
             public void onLoadComplete(SoundPool soundPool, int i, int i1) {
                 Log.i("ON_SOUND_LOAD", String.valueOf(i) + "|" + String.valueOf(i1));
-                if(i == 3 && i1 == 0){
+                if (i == 3 && i1 == 0) {
                     //收款方式处理
                     manageCashierType();
                 }
@@ -303,8 +304,13 @@ public class CalculatorFragment extends Fragment {
         if (Objects.equals(numberStack, "")) {
             numberStack = nbr;
         } else {
-            if (numberStack.length() <= 6) {
+            //只取两位小数
+            if (numberStack.contains(".") && numberStack.substring(numberStack.indexOf(".")).length() == 3) { //substring includes .
+                ToastUtil.show(activity, "仅支持两位小数哦~");
+            } else if (numberStack.length() <= 6) {
                 numberStack = numberStack + nbr;
+            } else {
+                ToastUtil.show(activity, "金额已达上限了~");
             }
         }
         Log.i("calculator:", numberStack);
@@ -316,7 +322,7 @@ public class CalculatorFragment extends Fragment {
             numberStack = "0.";
         } else {
             //避免多个小数输入导致错误
-            if(!numberStack.contains(".")){
+            if (!numberStack.contains(".")) {
                 numberStack = numberStack + '.';
             }
         }
@@ -403,7 +409,7 @@ public class CalculatorFragment extends Fragment {
      * 弹出收款信息框，等待扫码收款
      */
     private void startCashier() {
-        if(!waitingPayDialog.isAdded()) {
+        if (!waitingPayDialog.isAdded()) {
             Bundle bundle = new Bundle();
             bundle.putString("money", moneyToCashier);
             waitingPayDialog.setArguments(bundle);
@@ -413,7 +419,7 @@ public class CalculatorFragment extends Fragment {
             //播放请扫码的音频
 //        Log.i("+++SOUND+++", String.valueOf(showPayCodeSound));
             playSound(showPayCodeSound);
-        }else{
+        } else {
             Log.i("NOT_ADDED", "发生了什么？");
 //            ToastUtil.show(activity, "操作太快，请重试");
         }
@@ -448,8 +454,8 @@ public class CalculatorFragment extends Fragment {
 
     private void formatResultValue(Double value) {
         BigDecimal bd = new BigDecimal(value);
-        calResult = bd.setScale(2, BigDecimal.ROUND_DOWN).doubleValue(); //四舍五入
-        calResultView.setText(Helper.formatMoney(value, false));
+        calResult = bd.setScale(2, RoundingMode.HALF_UP).doubleValue(); //直接截断
+        calResultView.setText(Helper.formatMoney(calResult, false));
     }
 
     private void initMiniScreen() {
