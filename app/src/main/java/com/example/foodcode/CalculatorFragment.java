@@ -15,6 +15,7 @@ import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.Observer;
 
 import android.os.Handler;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -51,6 +52,7 @@ public class CalculatorFragment extends Fragment {
     private PaymentViewModel paymentViewModel;
 
     CashierWaitingDialogFragment waitingPayDialog;
+    private static long lastClickTime = 0L;
     private ScreenManager screenManager = ScreenManager.getInstance();
     private TextDisplay miniScreenDisplay = null;
 
@@ -409,6 +411,12 @@ public class CalculatorFragment extends Fragment {
      * 弹出收款信息框，等待扫码收款
      */
     private void startCashier() {
+
+        if (isFastClick(500)) {
+            ToastUtil.show(activity, "还没反应过来，慢点操作~");
+            return;
+        }
+
         if (!waitingPayDialog.isAdded()) {
             Bundle bundle = new Bundle();
             bundle.putString("money", moneyToCashier);
@@ -504,6 +512,16 @@ public class CalculatorFragment extends Fragment {
             });
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private boolean isFastClick(int millionSeconds) {
+        long now = SystemClock.elapsedRealtime();
+        if (Math.abs(now - lastClickTime) < millionSeconds) {
+            return true;
+        } else {
+            lastClickTime = now;
+            return false;
         }
     }
 }
