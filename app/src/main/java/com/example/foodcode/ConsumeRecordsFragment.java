@@ -59,6 +59,7 @@ public class ConsumeRecordsFragment extends Fragment {
     private AuthManager authManager;
 
     private int pageIndex = 1;
+    private int pageSize = 10;
     // 可见的item数
     private int visibleItemCount;
     // 第一个可见的item index
@@ -67,7 +68,9 @@ public class ConsumeRecordsFragment extends Fragment {
     private int totalRenderItemCount;
     // 数据库中的总数
     private int totalItemCount;
+    // 正在加载更多
     private boolean loadingMore = false;
+    // 数据项已全加载
     private boolean itemAllLoaded = false;
 
     @Override
@@ -163,9 +166,8 @@ public class ConsumeRecordsFragment extends Fragment {
                 totalRenderItemCount = recordsLayoutManager.getItemCount();
                 firstVisibleItem = recordsLayoutManager.findFirstVisibleItemPosition();
 
-                //TODO
                 if(!loadingMore && !itemAllLoaded){
-                    if(firstVisibleItem + visibleItemCount >= totalRenderItemCount){
+                    if(firstVisibleItem + visibleItemCount >= pageSize){
                        pageIndex++;
                        loadingMore = true;
                        fetchRecords();
@@ -183,6 +185,8 @@ public class ConsumeRecordsFragment extends Fragment {
 
     private void refreshRecords(){
         pageIndex = 1;
+        itemAllLoaded = false;
+        loadingMore = true;
         fetchRecords();
     }
 
@@ -190,8 +194,9 @@ public class ConsumeRecordsFragment extends Fragment {
 
         Map<String, Object> params = new HashMap<>();
         params.put("pageNo", pageIndex);
-        params.put("pageSize", 10);
+        params.put("pageSize", pageSize);
         params.put("deviceCode", authManager.getDeviceCode());
+
         new HttpClient(context).post("app/merchant/order/list", params, new okhttp3.Callback() {
             @Override
             public void onFailure(@NonNull Call call, IOException e) {
@@ -239,12 +244,13 @@ public class ConsumeRecordsFragment extends Fragment {
                                     }
 
                                     totalItemCount = responseData.getInt("totalRecords");
-                                    if(totalRenderItemCount >= totalItemCount){
+                                    if(pageIndex * pageSize >= totalItemCount){
                                         itemAllLoaded = true;
                                     }
 
                                     Log.i("RECORD SIZE", String.valueOf(currentSize) + "," + String.valueOf(consumeRecordList.size()));
-                                    recordsAdapter.notifyItemRangeChanged(consumeRecordList.size(), currentSize);
+//                                    recordsAdapter.notifyItemRangeChanged(consumeRecordList.size(), currentSize);
+                                    recordsAdapter.notifyDataSetChanged();
                                 }
 
                                 loadingMore = false;
