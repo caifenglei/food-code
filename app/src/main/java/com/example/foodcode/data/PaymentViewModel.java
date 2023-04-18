@@ -36,7 +36,7 @@ public class PaymentViewModel {
     }
 
     //payment async callback result
-    public LiveData<PaymentResult> getPaymentResult(){
+    public LiveData<PaymentResult> getPaymentResult() {
         return paymentResult;
     }
 
@@ -49,7 +49,7 @@ public class PaymentViewModel {
         new HttpClient(context).post("app/merchant/payment/pay", params, new okhttp3.Callback() {
             @Override
             public void onFailure(@NonNull Call call, IOException e) {
-                Log.e("RECEIVE", "Failure", e);
+                Log.e("HTTP onFailure", e.getMessage());
             }
 
             @Override

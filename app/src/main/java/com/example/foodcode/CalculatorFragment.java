@@ -160,11 +160,25 @@ public class CalculatorFragment extends Fragment {
             @Override
             public void onCancel() {
                 Log.i("COMPLETE", "cancelled...");
-                //取消收银，则重置金额
-                tapClear();
+                //取消收银，不重置金额 2023-04-17更改
+//                tapClear();
 
                 autoCashier = false;
                 miniScreenDisplay.hidePay();
+            }
+
+            //重启付款：前一付款不成功，自动重新发起收款（不改支付金额）
+            public void onRelaunch(){
+                autoCashier = false;
+                miniScreenDisplay.hidePay();
+
+                resourceHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.i("Start cashier again ===", "callback of confirm button");
+                        startCashier();
+                    }
+                }, 200);
             }
 
             //扫码完成，发起收款请求
@@ -417,6 +431,7 @@ public class CalculatorFragment extends Fragment {
             return;
         }
 
+        //弹框未加载
         if (!waitingPayDialog.isAdded()) {
             Bundle bundle = new Bundle();
             bundle.putString("money", moneyToCashier);

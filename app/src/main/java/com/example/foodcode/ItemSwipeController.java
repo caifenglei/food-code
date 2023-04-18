@@ -47,8 +47,9 @@ public class ItemSwipeController extends ItemTouchHelper.Callback {
 
         //Disabled case
         Log.i("STATUS_PAY", String.valueOf(status) + "," + String.valueOf(paymentType));
+        //退款中，已退款，以及非当前月，不可退款
         if(status == ConsumeRecord.STATUS_REFUNDING || status == ConsumeRecord.STATUS_REFUNDED
-                || paymentType == ConsumeRecord.PAYMENT_TYPE_TEMP || paymentType == ConsumeRecord.PAYMENT_TYPE_COMBINE
+//                || paymentType == ConsumeRecord.PAYMENT_TYPE_TEMP || paymentType == ConsumeRecord.PAYMENT_TYPE_COMBINE
             || !isInCurrentMonth(orderTime)){
             return makeMovementFlags(0, 0);
         }else{

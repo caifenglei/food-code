@@ -8,11 +8,13 @@ import com.example.foodcode.data.AuthManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -24,8 +26,8 @@ public class HttpClient {
     public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
 
 //    private static final String BASE_URL = "https://baomadev.cttq.com/";
-//    private static final String BASE_URL = "https://baomaqas.cttq.com/";
-    private static final String BASE_URL = "https://baoma.cttq.com/";
+    private static final String BASE_URL = "https://baomaqas.cttq.com/";
+//    private static final String BASE_URL = "https://baoma.cttq.com/";
 
     AuthManager authManager;
 
@@ -35,7 +37,12 @@ public class HttpClient {
     }
 
     public void post(String path, Map<String, Object> params, okhttp3.Callback callback) {
-        OkHttpClient client = new OkHttpClient();
+        int timeout = 90000;
+        OkHttpClient client = new OkHttpClient.Builder()
+//                .connectTimeout(1000, TimeUnit.MILLISECONDS)
+                .readTimeout(timeout, TimeUnit.MILLISECONDS)
+//                .writeTimeout(timeout, TimeUnit.MILLISECONDS)
+                .build();
 
         JSONObject jsonObject = new JSONObject();
         try {

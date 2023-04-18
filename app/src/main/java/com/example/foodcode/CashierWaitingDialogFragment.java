@@ -40,6 +40,8 @@ public class CashierWaitingDialogFragment extends AppCompatDialogFragment {
     public interface OnCompleteListener {
         void onCancel();
 
+        void onRelaunch();
+
         void onComplete(String payQrCode, String money);
     }
 
@@ -135,6 +137,7 @@ public class CashierWaitingDialogFragment extends AppCompatDialogFragment {
             }
         });
 
+        //主动式的取消收银
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -148,11 +151,12 @@ public class CashierWaitingDialogFragment extends AppCompatDialogFragment {
             }
         });
 
+        //确认按钮在收款结果返回后展示，确认一条信息后，停止等待收银
         confirmDialogButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (completeListener != null) {
-                    completeListener.onCancel();
+                    completeListener.onRelaunch();
                 }
                 dismiss();
             }

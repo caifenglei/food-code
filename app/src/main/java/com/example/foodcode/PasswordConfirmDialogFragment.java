@@ -131,7 +131,7 @@ public class PasswordConfirmDialogFragment extends DialogFragment implements Vie
         new HttpClient(context).post("/app/merchant/payment/refund", params, new okhttp3.Callback() {
             @Override
             public void onFailure(@NonNull Call call, IOException e) {
-                Log.e("RECEIVE", "Failure", e);
+                Log.i("REFUND RECEIVE...", "Failure");
             }
 
             @Override
