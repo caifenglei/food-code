@@ -160,8 +160,8 @@ public class CalculatorFragment extends Fragment {
             @Override
             public void onCancel() {
                 Log.i("COMPLETE", "cancelled...");
-                //取消收银，不重置金额 2023-04-17更改
-//                tapClear();
+                //取消收银，重置金额 2023-04-17更改
+                tapClear();
 
                 autoCashier = false;
                 miniScreenDisplay.hidePay();
